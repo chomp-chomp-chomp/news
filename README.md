@@ -1,36 +1,389 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Newsletter Platform MVP
+
+A production-ready, self-hosted newsletter platform built with Next.js, Supabase, and Resend. Manage multiple publications, create beautiful emails, and track subscriber engagement.
+
+## Features
+
+### ✨ Multi-Publication Support
+- Host unlimited newsletters in one platform
+- Each with its own branding, subscribers, and archive
+- Public directory of all newsletters
+
+### 📧 Email Management
+- Visual content blocks (stories, promos, text, images)
+- React Email templates with responsive design
+- Preview before sending
+- Test emails to verify rendering
+- Batch sending with rate limiting
+
+### 👥 Subscriber Management
+- Double opt-in confirmation flow
+- CSV import/export
+- Automatic bounce and complaint handling
+- Subscriber status tracking (active, pending, unsubscribed, bounced)
+
+### 📊 Analytics & Tracking
+- Email opens and clicks (via Resend webhooks)
+- Subscriber growth metrics
+- Issue performance stats
+
+### 🔒 Security
+- Row-level security (RLS) with Supabase
+- Rate limiting on subscriptions and API endpoints
+- Webhook signature verification
+- Admin-only access control
+
+### 🎨 Design
+- Based on chompchomp.cc design system
+- Responsive layouts
+- Dark mode support
+- Clean, minimal UI
+
+## Tech Stack
+
+- **Framework**: Next.js 14 (App Router, TypeScript)
+- **Database**: Supabase (Postgres)
+- **Authentication**: Supabase Auth
+- **Email**: Resend
+- **Email Templates**: React Email
+- **Image Storage**: ImageKit
+- **Styling**: CSS Custom Properties + Tailwind
+- **Hosting**: Vercel (recommended)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ and npm
+- Supabase account ([supabase.com](https://supabase.com))
+- Resend account ([resend.com](https://resend.com))
+- ImageKit account ([imagekit.io](https://imagekit.io))
+- Git
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/chomp-chomp-chomp/news.git
+cd news
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Set Up Supabase
+
+#### Create a New Project
+
+1. Go to [supabase.com](https://supabase.com) and create a new project
+2. Wait for the database to initialize
+
+#### Run Migrations
+
+1. In the Supabase dashboard, go to **SQL Editor**
+2. Open `supabase/migrations/20260118000001_initial_schema.sql`
+3. Copy and paste the entire contents into the SQL Editor
+4. Click **Run** to execute the migration
+
+#### Load Seed Data (Optional)
+
+1. In the SQL Editor, open `supabase/seed/seed.sql`
+2. Copy and paste the contents
+3. Click **Run** to create sample data
+
+#### Get API Keys
+
+1. Go to **Project Settings** → **API**
+2. Copy the following:
+   - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
+   - `anon public` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `service_role secret` key → `SUPABASE_SERVICE_ROLE_KEY` (⚠️ Never expose this)
+
+### 4. Set Up Resend
+
+1. Go to [resend.com](https://resend.com) and create an account
+2. Add and verify your domain
+3. Go to **API Keys** and create a new key
+4. Copy the key → `RESEND_API_KEY`
+5. Go to **Webhooks** and create a webhook:
+   - URL: `https://your-domain.com/api/webhooks/resend`
+   - Events: Select all email events
+   - Copy the signing secret → `RESEND_WEBHOOK_SECRET`
+
+### 5. Set Up ImageKit
+
+1. Go to [imagekit.io](https://imagekit.io) and create an account
+2. Go to **Developer Options** → **API Keys**
+3. Copy the following:
+   - Public Key → `NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY`
+   - Private Key → `IMAGEKIT_PRIVATE_KEY`
+   - URL Endpoint → `NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT`
+
+### 6. Configure Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in all the values from steps 3-5:
+
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Resend
+RESEND_API_KEY=re_xxxxxxxxxx
+RESEND_WEBHOOK_SECRET=whsec_xxxxxxxxxx
+
+# ImageKit
+NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY=public_xxxxxxxxxx
+IMAGEKIT_PRIVATE_KEY=private_xxxxxxxxxx
+NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your_id
+
+# Application
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NODE_ENV=development
+
+# Rate Limiting
+RATE_LIMIT_SUBSCRIBE_PER_HOUR=5
+RATE_LIMIT_SEND_TEST_PER_HOUR=10
+
+# Email Configuration
+EMAIL_BATCH_SIZE=100
+EMAIL_BATCH_DELAY_MS=1000
+```
+
+### 7. Create Your Admin Account
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Open [http://localhost:3000/login](http://localhost:3000/login)
+2. Click "Sign Up" and create an account
+3. Check your email for the confirmation link
+4. Confirm your email address
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 8. Make Yourself an Admin
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+After confirming your email:
 
-## Learn More
+1. Go to Supabase Dashboard → **SQL Editor**
+2. Find your user ID:
 
-To learn more about Next.js, take a look at the following resources:
+```sql
+SELECT id, email FROM auth.users;
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Copy your user ID and run:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```sql
+INSERT INTO publication_admins (publication_id, user_id, role)
+VALUES (
+  '00000000-0000-0000-0000-000000000001', -- seed publication ID
+  'YOUR_USER_ID_HERE',
+  'admin'
+);
+```
 
-## Deploy on Vercel
+4. Refresh the admin dashboard
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 9. Start Building!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+You now have a fully functional newsletter platform! 🎉
+
+- **Admin**: [http://localhost:3000/admin](http://localhost:3000/admin)
+- **Public Site**: [http://localhost:3000](http://localhost:3000)
+
+## Project Structure
+
+```
+news/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── admin/             # Admin dashboard
+│   │   ├── api/               # API routes
+│   │   ├── n/[slug]/          # Public newsletter pages
+│   │   └── login/             # Authentication
+│   ├── components/            # React components
+│   ├── emails/                # React Email templates
+│   ├── lib/                   # Utilities and helpers
+│   │   ├── db/               # Database query functions
+│   │   ├── supabase/         # Supabase clients
+│   │   ├── auth.ts           # Authentication helpers
+│   │   ├── logger.ts         # Logging utilities
+│   │   ├── rate-limit.ts     # Rate limiting
+│   │   └── render-model.ts   # Email rendering logic
+│   └── types/                 # TypeScript types
+├── supabase/
+│   ├── migrations/            # Database schema
+│   └── seed/                  # Sample data
+└── public/                    # Static assets
+```
+
+## API Routes
+
+### Public Endpoints
+
+- `POST /api/subscribe` - Subscribe to a publication
+- `GET /api/confirm?token=xxx` - Confirm subscription
+- `GET /api/unsubscribe?token=xxx` - Unsubscribe
+
+### Admin Endpoints (Auth Required)
+
+- `POST /api/send/test` - Send test email
+- `POST /api/send/campaign` - Send to all subscribers
+- `POST /api/upload/image` - Upload image to ImageKit
+- `DELETE /api/upload/image?fileId=xxx` - Delete image
+
+### Webhooks
+
+- `POST /api/webhooks/resend` - Receive Resend events
+
+## Common Tasks
+
+### Create a New Publication
+
+1. Go to Admin → Publications
+2. Click "Create Publication"
+3. Fill in details and save
+4. You're automatically added as an admin
+
+### Send Your First Newsletter
+
+1. Go to your publication in the admin
+2. Click "New Issue"
+3. Add content blocks (stories, promos, etc.)
+4. Click "Preview" to see how it looks
+5. Click "Send Test" to send to your email
+6. When ready, click "Send to Subscribers"
+
+### Import Subscribers
+
+1. Go to Admin → Publications → [Your Publication] → Subscribers
+2. Click "Import CSV"
+3. Upload a CSV with at least an `email` column
+4. Imported subscribers are automatically set to "active" status
+
+### Export Subscribers
+
+1. Go to Admin → Publications → [Your Publication] → Subscribers
+2. Click "Export CSV"
+3. Choose status filter (all, active, etc.)
+4. Download the CSV file
+
+## Deployment
+
+### Deploy to Vercel
+
+1. Push your code to GitHub
+2. Go to [vercel.com](https://vercel.com) and import your repository
+3. Add all environment variables from `.env.local`
+4. Update `NEXT_PUBLIC_APP_URL` to your production domain
+5. Deploy!
+
+### Update Resend Webhook
+
+After deployment, update your Resend webhook URL:
+
+1. Go to Resend Dashboard → Webhooks
+2. Edit your webhook
+3. Update URL to: `https://your-domain.com/api/webhooks/resend`
+4. Save
+
+## Configuration
+
+### Rate Limiting
+
+Adjust in `.env.local`:
+
+```env
+RATE_LIMIT_SUBSCRIBE_PER_HOUR=5      # Subscriptions per email per hour
+RATE_LIMIT_SEND_TEST_PER_HOUR=10     # Test sends per user per hour
+```
+
+### Email Sending
+
+```env
+EMAIL_BATCH_SIZE=100          # Emails per batch
+EMAIL_BATCH_DELAY_MS=1000     # Delay between batches (ms)
+```
+
+## Troubleshooting
+
+### "No publications found"
+
+Run the seed SQL to create the sample publication, or create a new one in the admin.
+
+### "Unauthorized" errors
+
+Make sure you've added yourself as a publication admin in Supabase:
+
+```sql
+INSERT INTO publication_admins (publication_id, user_id, role)
+SELECT 'PUBLICATION_ID', id, 'admin'
+FROM auth.users WHERE email = 'your-email@example.com';
+```
+
+### Emails not sending
+
+1. Check that `RESEND_API_KEY` is set correctly
+2. Verify your domain is verified in Resend
+3. Check the console for error logs
+
+### Images not uploading
+
+1. Verify ImageKit credentials in `.env.local`
+2. Check that your ImageKit account is active
+3. Ensure the API keys have upload permissions
+
+## Production Considerations
+
+### Background Jobs
+
+The current campaign sending happens in-process. For large subscriber lists, consider:
+
+- Supabase Edge Functions
+- Vercel Cron Jobs
+- External job queue (BullMQ, etc.)
+
+### Monitoring
+
+Set up monitoring for:
+
+- Email delivery rates
+- API errors
+- Database performance
+- Webhook failures
+
+### Backups
+
+Enable automated backups in Supabase:
+
+1. Go to Project Settings → Database
+2. Enable Point-in-Time Recovery (PITR)
+
+## Contributing
+
+This is a personal project, but suggestions and bug reports are welcome!
+
+## License
+
+MIT License - feel free to use this for your own newsletters!
+
+## Support
+
+For issues or questions:
+- Open a GitHub issue
+- Check the code comments for implementation details
+- Review the SQL schema for database structure
+
+---
+
+Built with ❤️ using the Chomp design system
