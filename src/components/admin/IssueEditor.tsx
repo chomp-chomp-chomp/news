@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import ImageUpload from './ImageUpload'
+import RichTextEditor from './RichTextEditor'
 
 type Publication = any
 type Issue = any
@@ -505,16 +507,14 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                   onBlur={handleBlur}
                 />
               </div>
-              <div>
-                <label className="form-label">Image URL</label>
-                <input
-                  type="url"
-                  className="form-input"
-                  value={data.image_url || ''}
-                  onChange={(e) => handleChange('image_url', e.target.value)}
-                  onBlur={handleBlur}
-                />
-              </div>
+              <ImageUpload
+                label="Story Image"
+                currentImage={data.image_url || ''}
+                onUpload={(url) => {
+                  handleChange('image_url', url)
+                  handleBlur()
+                }}
+              />
               <div>
                 <label className="form-label">Image Alt Text</label>
                 <input
@@ -542,12 +542,13 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
               </div>
               <div>
                 <label className="form-label">Content</label>
-                <textarea
-                  className="form-input"
-                  value={data.content || ''}
-                  onChange={(e) => handleChange('content', e.target.value)}
-                  onBlur={handleBlur}
-                  rows={3}
+                <RichTextEditor
+                  content={data.content || ''}
+                  onChange={(html) => {
+                    handleChange('content', html)
+                    handleBlur()
+                  }}
+                  placeholder="Enter promo content..."
                 />
               </div>
               <div>
@@ -587,12 +588,13 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
             <>
               <div>
                 <label className="form-label">Content</label>
-                <textarea
-                  className="form-input"
-                  value={data.content || ''}
-                  onChange={(e) => handleChange('content', e.target.value)}
-                  onBlur={handleBlur}
-                  rows={5}
+                <RichTextEditor
+                  content={data.content || ''}
+                  onChange={(html) => {
+                    handleChange('content', html)
+                    handleBlur()
+                  }}
+                  placeholder="Enter your content..."
                 />
               </div>
               <div>
@@ -615,16 +617,14 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
 
           {block.type === 'image' && (
             <>
-              <div>
-                <label className="form-label">Image URL</label>
-                <input
-                  type="url"
-                  className="form-input"
-                  value={data.url || ''}
-                  onChange={(e) => handleChange('url', e.target.value)}
-                  onBlur={handleBlur}
-                />
-              </div>
+              <ImageUpload
+                label="Image"
+                currentImage={data.url || ''}
+                onUpload={(url) => {
+                  handleChange('url', url)
+                  handleBlur()
+                }}
+              />
               <div>
                 <label className="form-label">Alt Text</label>
                 <input
@@ -679,12 +679,13 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
           {block.type === 'footer' && (
             <div>
               <label className="form-label">Footer Content</label>
-              <textarea
-                className="form-input"
-                value={data.content || ''}
-                onChange={(e) => handleChange('content', e.target.value)}
-                onBlur={handleBlur}
-                rows={3}
+              <RichTextEditor
+                content={data.content || ''}
+                onChange={(html) => {
+                  handleChange('content', html)
+                  handleBlur()
+                }}
+                placeholder="Enter footer content..."
               />
             </div>
           )}
