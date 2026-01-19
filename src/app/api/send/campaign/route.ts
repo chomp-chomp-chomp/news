@@ -6,6 +6,7 @@ import { resend, EMAIL_CONFIG } from '@/lib/resend'
 import { getRenderModelFromDb } from '@/lib/render-model'
 import { render } from '@react-email/render'
 import NewsletterEmail from '@/emails/newsletter-template'
+import { getIssueById } from '@/lib/db/issues'
 import { z } from 'zod'
 
 const sendCampaignSchema = z.object({
@@ -30,13 +31,9 @@ export async function POST(request: NextRequest) {
     const adminSupabase = await createAdminClient()
 
     // Get issue and verify user has access
-    const { data: issue, error: issueError } = await supabase
-      .from('issues')
-      .select('*, publication:publications(*)')
-      .eq('id', issueId)
-      .single()
+    const issue = await getIssueById(issueId)
 
-    if (issueError || !issue) {
+    if (!issue) {
       logger.error('Issue not found', { issueId })
       return NextResponse.json({ error: 'Issue not found' }, { status: 404 })
     }
