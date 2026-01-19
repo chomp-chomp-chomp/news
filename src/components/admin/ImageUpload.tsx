@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import ImageKit from 'imagekit-javascript'
 
 interface ImageUploadProps {
   onUpload: (url: string) => void
@@ -38,13 +37,6 @@ export default function ImageUpload({ onUpload, currentImage, label = 'Image' }:
       if (!authResponse.ok) throw new Error('Failed to get auth')
 
       const authData = await authResponse.json()
-
-      // Initialize ImageKit
-      const imagekit = new ImageKit({
-        publicKey: authData.publicKey,
-        urlEndpoint: authData.urlEndpoint,
-        authenticationEndpoint: '/api/imagekit/auth',
-      })
 
       // Create form data
       const formData = new FormData()
