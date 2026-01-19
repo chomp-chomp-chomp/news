@@ -82,12 +82,12 @@ export async function getSubscriberByConfirmationToken(token: string) {
 
   const { data, error } = await supabase
     .from('subscribers')
-    .select('*')
+    .select('*, publication:publications(*)')
     .eq('confirmation_token', token)
     .single()
 
-  if (error) throw error
-  return data as Subscriber
+  if (error && error.code !== 'PGRST116') throw error
+  return data as (Subscriber & { publication: any }) | null
 }
 
 /**
@@ -98,12 +98,12 @@ export async function getSubscriberByUnsubscribeToken(token: string) {
 
   const { data, error } = await supabase
     .from('subscribers')
-    .select('*')
+    .select('*, publication:publications(*)')
     .eq('unsubscribe_token', token)
     .single()
 
-  if (error) throw error
-  return data as Subscriber
+  if (error && error.code !== 'PGRST116') throw error
+  return data as (Subscriber & { publication: any }) | null
 }
 
 /**
