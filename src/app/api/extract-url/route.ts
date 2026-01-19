@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid URL format', details: error.errors },
+        { error: 'Invalid URL format', details: error.issues },
         { status: 400 }
       )
     }
