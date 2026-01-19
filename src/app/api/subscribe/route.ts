@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
 
       if (existing.status === 'unsubscribed') {
         // Reactivate subscription with new confirmation
-        const { data: updated } = await supabase
+        const { data: updated, error: updateError } = await supabase
           .from('subscribers')
           .update({
             status: 'pending',
@@ -109,16 +109,22 @@ export async function POST(request: NextRequest) {
           .select()
           .single()
 
-        if (updated) {
-          await sendConfirmationEmail(
-            updated,
-            publication,
-            request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || ''
+        if (updateError || !updated) {
+          logger.error('Failed to reactivate subscriber', updateError, { email })
+          return NextResponse.json(
+            { error: 'Failed to resubscribe. Please try again.' },
+            { status: 500 }
           )
-          await logSubscriberEvent(updated.id, 'subscribed', {
-            publicationId: publication.id,
-          })
         }
+
+        await sendConfirmationEmail(
+          updated,
+          publication,
+          request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || ''
+        )
+        await logSubscriberEvent(updated.id, 'subscribed', {
+          publicationId: publication.id,
+        })
 
         return NextResponse.json({
           message: 'Welcome back! Please confirm your subscription.',
@@ -138,7 +144,7 @@ export async function POST(request: NextRequest) {
       .select()
       .single()
 
-    if (subError) {
+    if (subError || !subscriber) {
       logger.error('Failed to create subscriber', subError, { email })
       return NextResponse.json(
         { error: 'Failed to subscribe. Please try again.' },
