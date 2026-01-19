@@ -62,8 +62,8 @@ export async function getIssueBySlug(publicationId: string, slug: string) {
     .is('deleted_at', null)
     .single()
 
-  if (error) throw error
-  return data
+  if (error && error.code !== 'PGRST116') throw error
+  return data as (Issue & { publication: any; blocks: any[] }) | null
 }
 
 /**
@@ -79,8 +79,8 @@ export async function getIssueById(issueId: string) {
     .is('deleted_at', null)
     .single()
 
-  if (error) throw error
-  return data
+  if (error && error.code !== 'PGRST116') throw error
+  return data as (Issue & { publication: any; blocks: any[] }) | null
 }
 
 /**
