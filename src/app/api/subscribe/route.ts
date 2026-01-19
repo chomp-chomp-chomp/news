@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 import { createLogger, logSubscriberEvent } from '@/lib/logger'
 import { resend } from '@/lib/resend'
+import { reactivateSubscriber } from '@/lib/db/subscribers'
 import { z } from 'zod'
 
 const subscribeSchema = z.object({
@@ -98,38 +99,29 @@ export async function POST(request: NextRequest) {
 
       if (existing.status === 'unsubscribed') {
         // Reactivate subscription with new confirmation
-        const { data: updated, error: updateError } = await supabase
-          .from('subscribers')
-          .update({
-            status: 'pending',
-            confirmation_token: crypto.randomUUID(),
-            unsubscribe_token: crypto.randomUUID(),
-          })
-          .eq('id', existing.id)
-          .select()
-          .single()
+        try {
+          const updated = await reactivateSubscriber(existing.id)
 
-        if (updateError || !updated) {
-          logger.error('Failed to reactivate subscriber', updateError, { email })
+          await sendConfirmationEmail(
+            updated,
+            publication,
+            request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || ''
+          )
+          await logSubscriberEvent(updated.id, 'subscribed', {
+            publicationId: publication.id,
+          })
+
+          return NextResponse.json({
+            message: 'Welcome back! Please confirm your subscription.',
+            status: 'resubscribed',
+          })
+        } catch (reactivateError: any) {
+          logger.error('Failed to reactivate subscriber', reactivateError, { email })
           return NextResponse.json(
             { error: 'Failed to resubscribe. Please try again.' },
             { status: 500 }
           )
         }
-
-        await sendConfirmationEmail(
-          updated,
-          publication,
-          request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || ''
-        )
-        await logSubscriberEvent(updated.id, 'subscribed', {
-          publicationId: publication.id,
-        })
-
-        return NextResponse.json({
-          message: 'Welcome back! Please confirm your subscription.',
-          status: 'resubscribed',
-        })
       }
     }
 

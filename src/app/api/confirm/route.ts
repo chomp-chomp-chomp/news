@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/server'
 import { createLogger, logSubscriberEvent } from '@/lib/logger'
-import { getSubscriberByConfirmationToken } from '@/lib/db/subscribers'
-import { redirect } from 'next/navigation'
+import { getSubscriberByConfirmationToken, confirmSubscriber } from '@/lib/db/subscribers'
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -45,42 +43,33 @@ export async function GET(request: NextRequest) {
     }
 
     // Confirm subscriber
-    const supabase = await createAdminClient()
-    const { data: updated, error: updateError } = await supabase
-      .from('subscribers')
-      .update({
-        status: 'active',
-        confirmed_at: new Date().toISOString(),
-      })
-      .eq('id', subscriber.id)
-      .select()
-      .single()
+    try {
+      const updated = await confirmSubscriber(token)
 
-    if (updateError || !updated) {
-      logger.error('Failed to confirm subscriber', updateError, {
+      await logSubscriberEvent(updated.id, 'confirmed', {
+        publicationId: subscriber.publication_id,
+      })
+
+      logger.info('Subscriber confirmed successfully', {
+        subscriberId: updated.id,
+        email: subscriber.email,
+      })
+
+      // Redirect to publication page with success message
+      return NextResponse.redirect(
+        new URL(
+          `/n/${subscriber.publication.slug}?message=confirmed`,
+          request.url
+        )
+      )
+    } catch (confirmError: any) {
+      logger.error('Failed to confirm subscriber', confirmError, {
         subscriberId: subscriber.id,
       })
       return NextResponse.redirect(
         new URL('/error?message=Failed to confirm subscription', request.url)
       )
     }
-
-    await logSubscriberEvent(subscriber.id, 'confirmed', {
-      publicationId: subscriber.publication_id,
-    })
-
-    logger.info('Subscriber confirmed successfully', {
-      subscriberId: subscriber.id,
-      email: subscriber.email,
-    })
-
-    // Redirect to publication page with success message
-    return NextResponse.redirect(
-      new URL(
-        `/n/${subscriber.publication.slug}?message=confirmed`,
-        request.url
-      )
-    )
   } catch (error) {
     logger.error('Confirmation endpoint error', error)
     return NextResponse.redirect(
