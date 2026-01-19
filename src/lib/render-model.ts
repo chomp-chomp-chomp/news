@@ -106,7 +106,7 @@ export function buildRenderModel(
       publishedAt: issue.published_at,
     },
     blocks: renderBlocks,
-    footer: footer ? (footer.content as unknown as FooterContent) : null,
+    footer: footer ? (footer.content as unknown as FooterContent) : null, // Type assertion needed due to Json type limitations
     urls: {
       webVersion: `${baseUrl}/n/${publication.slug}/${issue.slug}`,
       unsubscribe: options.unsubscribeToken

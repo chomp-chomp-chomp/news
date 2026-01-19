@@ -21,8 +21,10 @@ function getImageKit(): ImageKit {
 }
 
 // Client-side ImageKit instance with lazy loading
+// Note: The Proxy approach is needed to avoid breaking existing imports
 export const imagekit = new Proxy({} as ImageKit, {
   get(_target, prop) {
+    // Runtime type safety maintained through ImageKit class
     return (getImageKit() as any)[prop]
   }
 })

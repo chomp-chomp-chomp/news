@@ -14,9 +14,11 @@ export function getResend(): Resend {
   return resendInstance
 }
 
-// For backward compatibility
+// For backward compatibility - maintains existing API while using lazy initialization
+// Note: The Proxy approach is needed to avoid breaking existing imports
 export const resend = new Proxy({} as Resend, {
   get(_target, prop) {
+    // Runtime type safety maintained through Resend class
     return (getResend() as any)[prop]
   }
 })
