@@ -1,9 +1,30 @@
 import ImageKit from 'imagekit-javascript'
 
-// Client-side ImageKit instance
-export const imagekit = new ImageKit({
-  publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
-  urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
+// Lazy initialization to avoid build-time errors
+let imagekitInstance: ImageKit | null = null
+
+function getImageKit(): ImageKit {
+  if (!imagekitInstance) {
+    const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY
+    const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT
+    
+    if (!publicKey || !urlEndpoint) {
+      throw new Error('ImageKit configuration is missing')
+    }
+    
+    imagekitInstance = new ImageKit({
+      publicKey,
+      urlEndpoint,
+    })
+  }
+  return imagekitInstance
+}
+
+// Client-side ImageKit instance with lazy loading
+export const imagekit = new Proxy({} as ImageKit, {
+  get(_target, prop) {
+    return (getImageKit() as any)[prop]
+  }
 })
 
 // Server-side ImageKit for authenticated operations
@@ -14,10 +35,18 @@ export function getServerImageKit() {
 
   const ImageKitServer = require('imagekit')
 
+  const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY
+  const privateKey = process.env.IMAGEKIT_PRIVATE_KEY
+  const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT
+  
+  if (!publicKey || !privateKey || !urlEndpoint) {
+    throw new Error('ImageKit server configuration is missing')
+  }
+
   return new ImageKitServer({
-    publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
-    privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
-    urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
+    publicKey,
+    privateKey,
+    urlEndpoint,
   })
 }
 

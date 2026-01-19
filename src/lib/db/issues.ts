@@ -225,6 +225,10 @@ export async function duplicateIssue(issueId: string, newSlug: string) {
 
   // Get original issue
   const issue = await getIssueById(issueId)
+  
+  if (!issue) {
+    throw new Error('Issue not found')
+  }
 
   // Create new issue
   const { data: newIssue, error: issueError } = await supabase

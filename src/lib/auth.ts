@@ -85,5 +85,5 @@ export async function getUserPublications(userId?: string) {
     return []
   }
 
-  return data?.map((d) => d.publication).filter(Boolean) || []
+  return data?.map((d: any) => d.publication).filter(Boolean) || []
 }
