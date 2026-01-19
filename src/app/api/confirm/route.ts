@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { createLogger, logSubscriberEvent } from '@/lib/logger'
+import { getSubscriberByConfirmationToken } from '@/lib/db/subscribers'
 import { redirect } from 'next/navigation'
 
 export async function GET(request: NextRequest) {
@@ -17,16 +18,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const supabase = await createAdminClient()
-
     // Find subscriber by confirmation token
-    const { data: subscriber, error: findError } = await supabase
-      .from('subscribers')
-      .select('*, publication:publications(*)')
-      .eq('confirmation_token', token)
-      .single()
+    const subscriber = await getSubscriberByConfirmationToken(token)
 
-    if (findError || !subscriber) {
+    if (!subscriber) {
       logger.warn('Invalid confirmation token', { token })
       return NextResponse.redirect(
         new URL(
@@ -50,6 +45,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Confirm subscriber
+    const supabase = await createAdminClient()
     const { data: updated, error: updateError } = await supabase
       .from('subscribers')
       .update({
@@ -60,7 +56,7 @@ export async function GET(request: NextRequest) {
       .select()
       .single()
 
-    if (updateError) {
+    if (updateError || !updated) {
       logger.error('Failed to confirm subscriber', updateError, {
         subscriberId: subscriber.id,
       })

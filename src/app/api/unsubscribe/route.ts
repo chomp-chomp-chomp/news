@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { createLogger, logSubscriberEvent } from '@/lib/logger'
+import { getSubscriberByUnsubscribeToken } from '@/lib/db/subscribers'
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -16,16 +17,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const supabase = await createAdminClient()
-
     // Find subscriber by unsubscribe token
-    const { data: subscriber, error: findError } = await supabase
-      .from('subscribers')
-      .select('*, publication:publications(*)')
-      .eq('unsubscribe_token', token)
-      .single()
+    const subscriber = await getSubscriberByUnsubscribeToken(token)
 
-    if (findError || !subscriber) {
+    if (!subscriber) {
       logger.warn('Invalid unsubscribe token', { token })
       return NextResponse.redirect(
         new URL('/error?message=Invalid unsubscribe link', request.url)
@@ -46,6 +41,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Unsubscribe
+    const supabase = await createAdminClient()
     const { data: updated, error: updateError } = await supabase
       .from('subscribers')
       .update({
@@ -56,7 +52,7 @@ export async function GET(request: NextRequest) {
       .select()
       .single()
 
-    if (updateError) {
+    if (updateError || !updated) {
       logger.error('Failed to unsubscribe', updateError, {
         subscriberId: subscriber.id,
       })
