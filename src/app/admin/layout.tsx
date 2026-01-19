@@ -2,6 +2,9 @@ import { requireAuth, getUserPublications } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import LogoutButton from '@/components/LogoutButton'
+import { Database } from '@/types/database'
+
+type Publication = Database['public']['Tables']['publications']['Row']
 
 export default async function AdminLayout({
   children,
@@ -64,7 +67,7 @@ export default async function AdminLayout({
                 Your Publications
               </h3>
               <ul style={{ listStyle: 'none' }}>
-                {publications.map((pub: any) => (
+                {publications.map((pub: Publication) => (
                   <li key={pub.id} style={{ marginBottom: '0.5rem' }}>
                     <Link href={`/admin/publications/${pub.id}`} style={{
                       display: 'block',

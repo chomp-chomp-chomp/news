@@ -19,6 +19,7 @@ import {
   StoryBlockData,
   PromoBlockData,
   TextBlockData,
+  ImageBlockData,
   FooterContent,
 } from '@/types/blocks'
 
@@ -174,7 +175,7 @@ function TextBlock({ data }: { data: TextBlockData }) {
   )
 }
 
-function ImageBlock({ data }: { data: any }) {
+function ImageBlock({ data }: { data: ImageBlockData }) {
   const imgElement = (
     <Img
       src={data.url}
