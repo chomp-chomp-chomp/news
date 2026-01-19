@@ -6,7 +6,7 @@ import { z } from 'zod'
 const createBlockSchema = z.object({
   type: z.enum(['story', 'promo', 'text', 'divider', 'image', 'footer']),
   sort_order: z.number(),
-  data: z.record(z.any()),
+  data: z.any(),
 })
 
 export async function POST(
