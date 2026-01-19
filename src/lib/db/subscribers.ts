@@ -171,6 +171,28 @@ export async function unsubscribeSubscriber(token: string) {
 }
 
 /**
+ * Reactivate unsubscribed subscriber (resets tokens and status to pending)
+ */
+export async function reactivateSubscriber(subscriberId: string) {
+  const supabase = await createAdminClient()
+
+  const { data, error } = await supabase
+    .from('subscribers')
+    .update({
+      status: 'pending',
+      confirmation_token: crypto.randomUUID(),
+      unsubscribe_token: crypto.randomUUID(),
+      unsubscribed_at: null,
+    })
+    .eq('id', subscriberId)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data as Subscriber
+}
+
+/**
  * Update subscriber status
  */
 export async function updateSubscriberStatus(
