@@ -4,6 +4,7 @@ import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 import { createLogger, logSubscriberEvent } from '@/lib/logger'
 import { resend } from '@/lib/resend'
 import { reactivateSubscriber } from '@/lib/db/subscribers'
+import { EMAIL_REGEX } from '@/lib/validation'
 import { Database } from '@/types/database'
 import { z } from 'zod'
 
@@ -13,11 +14,7 @@ type Publication = Database['public']['Tables']['publications']['Row']
 const subscribeSchema = z.object({
   publicationId: z.string().uuid(),
   email: z.string().email().min(3).max(255).refine(
-    (email) => {
-      // More comprehensive email validation
-      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-      return emailRegex.test(email)
-    },
+    (email) => EMAIL_REGEX.test(email),
     { message: 'Invalid email format' }
   ),
 })

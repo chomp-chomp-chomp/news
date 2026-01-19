@@ -1,20 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { isValidEmail } from '@/lib/validation'
 
 interface SubscribeFormProps {
   publicationId: string
-}
-
-// Email validation function
-function isValidEmail(email: string): boolean {
-  if (!email || email.length < 3 || email.length > 255) {
-    return false
-  }
-  
-  // Comprehensive email validation regex
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-  return emailRegex.test(email)
 }
 
 export default function SubscribeForm({ publicationId }: SubscribeFormProps) {

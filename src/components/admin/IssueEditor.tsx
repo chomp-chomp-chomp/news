@@ -7,6 +7,7 @@ import ImageUpload from './ImageUpload'
 import RichTextEditor from './RichTextEditor'
 import { Database } from '@/types/database'
 import { Json } from '@/types/database'
+import { jsonToRecord, getStringFromJson } from '@/lib/json-utils'
 
 type Publication = Database['public']['Tables']['publications']['Row']
 type Issue = Database['public']['Tables']['issues']['Row']
@@ -400,14 +401,11 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
   const [data, setData] = useState<Json>(block.data)
   const [expanded, setExpanded] = useState(true)
 
-  // Type guard for accessing Json as an object
-  const dataAsObject = (data && typeof data === 'object' && !Array.isArray(data)) ? data as Record<string, unknown> : {}
+  // Use utility function to safely convert Json to object
+  const dataAsObject = jsonToRecord(data)
   
   // Helper to safely get string values
-  const getString = (key: string): string => {
-    const value = dataAsObject[key]
-    return typeof value === 'string' ? value : ''
-  }
+  const getString = (key: string): string => getStringFromJson(data, key)
 
   function handleChange(field: string, value: string | boolean | number | null) {
     const newData = { ...dataAsObject, [field]: value }
