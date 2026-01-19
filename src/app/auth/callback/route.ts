@@ -6,12 +6,18 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const origin = requestUrl.origin
+  const next = requestUrl.searchParams.get('next') ?? '/admin'
 
   if (code) {
     const supabase = await createClient()
-    await supabase.auth.exchangeCodeForSession(code)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    if (error) {
+      console.error('Failed to exchange code for session:', error)
+      return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`)
+    }
   }
 
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect(`${origin}/admin`)
+  return NextResponse.redirect(`${origin}${next}`)
 }
