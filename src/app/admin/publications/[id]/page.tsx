@@ -16,11 +16,13 @@ export default async function PublicationManagePage({ params }: PageProps) {
   try {
     await requirePublicationAdmin(id)
   } catch {
-    notFound()
+    return notFound()
   }
 
   const publication = await getPublicationById(id)
-  if (!publication) notFound()
+  if (!publication) {
+    return notFound()
+  }
 
   const [issues, subscribers, stats] = await Promise.all([
     getPublicationIssues(id),
