@@ -64,7 +64,7 @@ export default async function AdminLayout({
                 Your Publications
               </h3>
               <ul style={{ listStyle: 'none' }}>
-                {publications.map((pub) => (
+                {publications.map((pub: any) => (
                   <li key={pub.id} style={{ marginBottom: '0.5rem' }}>
                     <Link href={`/admin/publications/${pub.id}`} style={{
                       display: 'block',

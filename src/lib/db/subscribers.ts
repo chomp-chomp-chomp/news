@@ -305,7 +305,7 @@ export async function importSubscribersFromCSV(
 
         resolve({ imported, duplicates, errors })
       },
-      error: (error) => {
+      error: (error: any) => {
         resolve({
           imported: 0,
           duplicates: 0,

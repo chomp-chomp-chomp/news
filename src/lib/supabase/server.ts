@@ -26,7 +26,7 @@ export async function createClient() {
         },
       },
     }
-  )
+  ) as any // Type workaround for @supabase/ssr 0.8.0
 }
 
 export async function createAdminClient() {
@@ -41,5 +41,5 @@ export async function createAdminClient() {
         setAll() {},
       },
     }
-  )
+  ) as any // Type workaround for @supabase/ssr 0.8.0
 }

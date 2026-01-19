@@ -9,7 +9,7 @@ export default async function AdminDashboard() {
 
   // Get stats for each publication
   const pubsWithStats = await Promise.all(
-    publications.map(async (pub) => {
+    publications.map(async (pub: any) => {
       const stats = await getPublicationStats(pub.id)
       const issues = await getPublicationIssues(pub.id)
       return { ...pub, stats, issueCount: issues.length }
