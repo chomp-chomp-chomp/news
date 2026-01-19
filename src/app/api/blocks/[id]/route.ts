@@ -4,7 +4,7 @@ import { updateBlock, deleteBlock } from '@/lib/db/issues'
 import { z } from 'zod'
 
 const updateSchema = z.object({
-  data: z.record(z.any()).optional(),
+  data: z.any().optional(),
   type: z.enum(['story', 'promo', 'text', 'divider', 'image', 'footer']).optional(),
 })
 
