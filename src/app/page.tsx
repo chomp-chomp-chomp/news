@@ -2,7 +2,13 @@ import Link from 'next/link'
 import { getPublicPublications } from '@/lib/db/publications'
 
 export default async function HomePage() {
-  const publications = await getPublicPublications()
+  let publications
+  try {
+    publications = await getPublicPublications()
+  } catch (error) {
+    console.error('Failed to load publications:', error)
+    publications = []
+  }
 
   return (
     <main className="container" style={{ paddingTop: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)' }}>
