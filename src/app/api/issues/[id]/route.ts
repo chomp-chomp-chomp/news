@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuth, isPublicationAdmin } from '@/lib/auth'
 import { updateIssue, getIssueById } from '@/lib/db/issues'
 import { z } from 'zod'
 
@@ -24,7 +24,14 @@ export async function PATCH(
       return NextResponse.json({ error: 'Issue not found' }, { status: 404 })
     }
 
-    // TODO: Add permission check that user is admin of publication
+    // Verify user is admin of the publication
+    const isAdmin = await isPublicationAdmin(issue.publication_id, user.id)
+    if (!isAdmin) {
+      return NextResponse.json(
+        { error: 'Unauthorized - you must be an admin of this publication' },
+        { status: 403 }
+      )
+    }
 
     // Parse and validate request
     const body = await request.json()

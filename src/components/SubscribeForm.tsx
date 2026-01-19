@@ -6,6 +6,17 @@ interface SubscribeFormProps {
   publicationId: string
 }
 
+// Email validation function
+function isValidEmail(email: string): boolean {
+  if (!email || email.length < 3 || email.length > 255) {
+    return false
+  }
+  
+  // Comprehensive email validation regex
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  return emailRegex.test(email)
+}
+
 export default function SubscribeForm({ publicationId }: SubscribeFormProps) {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -15,6 +26,13 @@ export default function SubscribeForm({ publicationId }: SubscribeFormProps) {
     e.preventDefault()
     setStatus('loading')
     setMessage('')
+
+    // Client-side validation
+    if (!isValidEmail(email)) {
+      setStatus('error')
+      setMessage('Please enter a valid email address')
+      return
+    }
 
     try {
       const response = await fetch('/api/subscribe', {
@@ -32,9 +50,10 @@ export default function SubscribeForm({ publicationId }: SubscribeFormProps) {
       setStatus('success')
       setMessage(data.message)
       setEmail('')
-    } catch (error: any) {
+    } catch (error) {
       setStatus('error')
-      setMessage(error.message || 'An error occurred')
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      setMessage(errorMessage)
     }
   }
 
