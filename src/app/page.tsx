@@ -1,8 +1,11 @@
 import Link from 'next/link'
 import { getPublicPublications } from '@/lib/db/publications'
+import { Database } from '@/types/database'
+
+type Publication = Database['public']['Tables']['publications']['Row']
 
 export default async function HomePage() {
-  let publications
+  let publications: Publication[]
   try {
     publications = await getPublicPublications()
   } catch (error) {
