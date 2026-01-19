@@ -36,8 +36,8 @@ export async function getPublicationBySlug(slug: string) {
     .is('deleted_at', null)
     .single()
 
-  if (error) throw error
-  return data
+  if (error && error.code !== 'PGRST116') throw error
+  return data as Publication | null
 }
 
 /**
@@ -53,8 +53,8 @@ export async function getPublicationById(id: string) {
     .is('deleted_at', null)
     .single()
 
-  if (error) throw error
-  return data
+  if (error && error.code !== 'PGRST116') throw error
+  return data as Publication | null
 }
 
 /**
