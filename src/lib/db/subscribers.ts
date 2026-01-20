@@ -314,16 +314,29 @@ export async function importSubscribersFromCSV(
               }
             }
 
-            // Create subscriber (auto-confirmed for imports)
-            await supabase.from('subscribers').insert({
-              publication_id: publicationId,
-              email,
-              status: 'active',
-              confirmed_at: new Date().toISOString(),
-              metadata,
-            })
+            // Create subscriber (auto-confirmed for imports) with error handling
+            try {
+              const { error: insertError } = await supabase.from('subscribers').insert({
+                publication_id: publicationId,
+                email,
+                status: 'active',
+                confirmed_at: new Date().toISOString(),
+                metadata,
+              })
 
-            imported++
+              if (insertError) {
+                // Handle duplicate key errors from race conditions
+                if (insertError.code === '23505') {
+                  duplicates++
+                } else {
+                  throw insertError
+                }
+              } else {
+                imported++
+              }
+            } catch (insertErr: any) {
+              errors.push(`Error importing ${email}: ${insertErr.message}`)
+            }
           } catch (error: any) {
             errors.push(`Error importing ${row.email}: ${error.message}`)
           }
