@@ -295,20 +295,20 @@ export async function deleteIssue(id: string) {
   try {
     const supabase = await createClient()
 
-    // Check if issue exists
-    const existing = await getIssueById(id)
-    if (!existing) {
-      throw new Error('Issue not found')
-    }
-
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('issues')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
+      .is('deleted_at', null) // Only update if not already deleted
+      .select()
 
     if (error) {
       console.error('Error deleting issue:', error)
       throw new Error(`Failed to delete issue: ${error.message}`)
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error('Issue not found or already deleted')
     }
   } catch (error) {
     console.error('Error in deleteIssue:', error)

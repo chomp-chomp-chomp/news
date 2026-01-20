@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     console.error('Extract URL error:', error)
     return NextResponse.json(
-      { error: 'Failed to extract URL metadata', details: error.message },
+      { error: 'Failed to extract URL metadata' },
       { status: 500 }
     )
   }

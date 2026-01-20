@@ -170,20 +170,20 @@ export async function deletePublication(id: string) {
   try {
     const supabase = await createClient()
 
-    // Check if publication exists
-    const existing = await getPublicationById(id)
-    if (!existing) {
-      throw new Error('Publication not found')
-    }
-
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('publications')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
+      .is('deleted_at', null) // Only update if not already deleted
+      .select()
 
     if (error) {
       console.error('Error deleting publication:', error)
       throw new Error(`Failed to delete publication: ${error.message}`)
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error('Publication not found or already deleted')
     }
   } catch (error) {
     console.error('Error in deletePublication:', error)
