@@ -58,6 +58,48 @@ export async function getPublicationById(id: string) {
 }
 
 /**
+ * Generate a unique slug by appending a number if needed
+ */
+async function generateUniqueSlug(baseSlug: string): Promise<string> {
+  const supabase = await createAdminClient()
+  
+  // Check if the base slug exists
+  const { data: existing } = await supabase
+    .from('publications')
+    .select('slug')
+    .eq('slug', baseSlug)
+    .is('deleted_at', null)
+    .maybeSingle()
+
+  // If slug doesn't exist, use it as-is
+  if (!existing) {
+    return baseSlug
+  }
+
+  // Generate numbered variations until we find one that doesn't exist
+  let counter = 2
+  while (counter < 100) { // Safety limit to prevent infinite loops
+    const candidateSlug = `${baseSlug}-${counter}`
+    
+    const { data: existingCandidate } = await supabase
+      .from('publications')
+      .select('slug')
+      .eq('slug', candidateSlug)
+      .is('deleted_at', null)
+      .maybeSingle()
+
+    if (!existingCandidate) {
+      return candidateSlug
+    }
+    
+    counter++
+  }
+
+  // If we couldn't find a unique slug after 100 attempts, use timestamp
+  return `${baseSlug}-${Date.now()}`
+}
+
+/**
  * Create a new publication
  */
 export async function createPublication(
@@ -68,10 +110,17 @@ export async function createPublication(
 
   console.log('Creating publication:', { publication, userId })
 
-  // Create publication
+  // Generate a unique slug if needed
+  const uniqueSlug = await generateUniqueSlug(publication.slug)
+  
+  if (uniqueSlug !== publication.slug) {
+    console.log(`Slug "${publication.slug}" already exists, using "${uniqueSlug}" instead`)
+  }
+
+  // Create publication with unique slug
   const { data, error } = await supabase
     .from('publications')
-    .insert(publication)
+    .insert({ ...publication, slug: uniqueSlug })
     .select()
     .single()
 
