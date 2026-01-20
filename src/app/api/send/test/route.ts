@@ -22,6 +22,18 @@ export async function POST(request: NextRequest) {
   })
 
   try {
+    // Check if Resend API key is configured
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY environment variable is not set')
+      return NextResponse.json(
+        {
+          error: 'Email service not configured',
+          details: 'RESEND_API_KEY environment variable is missing. Please add it in your Vercel project settings.'
+        },
+        { status: 500 }
+      )
+    }
+
     // Require authentication
     const user = await requireAuthApi()
     if (!user) {
@@ -100,6 +112,14 @@ export async function POST(request: NextRequest) {
     const emailHtml = await render(NewsletterEmail({ renderModel }))
 
     // Send test email
+    console.log('Sending test email with config:', {
+      from: `${issue.publication.from_name} <${issue.publication.from_email}>`,
+      to: testEmail,
+      subject: `[TEST] ${issue.subject}`,
+      hasHtml: !!emailHtml,
+      htmlLength: emailHtml?.length,
+    })
+
     const { data, error } = await resend.emails.send({
       from: `${issue.publication.from_name} <${issue.publication.from_email}>`,
       to: testEmail,
@@ -108,9 +128,13 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
+      console.error('Resend API error:', error)
       logger.error('Failed to send test email', error, { issueId, testEmail })
       return NextResponse.json(
-        { error: 'Failed to send test email' },
+        {
+          error: 'Failed to send test email',
+          details: error.message || 'Unknown error from Resend API'
+        },
         { status: 500 }
       )
     }
