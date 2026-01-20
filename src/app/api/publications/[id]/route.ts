@@ -30,7 +30,10 @@ export async function DELETE(
     }
 
     // Delete publication (soft delete)
-    await deletePublication(id)
+    const deleted = await deletePublication(id)
+    if (!deleted) {
+      return NextResponse.json({ error: 'Publication not found' }, { status: 404 })
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {

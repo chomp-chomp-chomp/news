@@ -150,7 +150,7 @@ export async function updatePublication(
   id: string,
   updates: PublicationUpdate
 ) {
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   const { data, error } = await supabase
     .from('publications')
@@ -159,7 +159,10 @@ export async function updatePublication(
     .select()
     .single()
 
-  if (error) throw error
+  if (error) {
+    console.error('Error updating publication:', error)
+    throw error
+  }
   return data as Publication
 }
 
@@ -168,7 +171,7 @@ export async function updatePublication(
  */
 export async function deletePublication(id: string) {
   try {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
 
     const { data, error } = await supabase
       .from('publications')
@@ -183,8 +186,10 @@ export async function deletePublication(id: string) {
     }
 
     if (!data || data.length === 0) {
-      throw new Error('Publication not found or already deleted')
+      return false
     }
+
+    return true
   } catch (error) {
     console.error('Error in deletePublication:', error)
     throw error
