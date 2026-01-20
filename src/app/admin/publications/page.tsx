@@ -31,7 +31,7 @@ export default async function PublicationsPage() {
           <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Publications</h1>
           <p className="text-muted">Manage your newsletters</p>
         </div>
-        <Link href="/admin/publications/new" className="btn btn-primary">
+        <Link href="/admin/publications/create" className="btn btn-primary">
           Create Publication
         </Link>
       </div>
@@ -42,7 +42,7 @@ export default async function PublicationsPage() {
           <p className="text-muted" style={{ marginBottom: '2rem' }}>
             Create your first newsletter to get started.
           </p>
-          <Link href="/admin/publications/new" className="btn btn-primary">
+          <Link href="/admin/publications/create" className="btn btn-primary">
             Create Your First Publication
           </Link>
         </div>
