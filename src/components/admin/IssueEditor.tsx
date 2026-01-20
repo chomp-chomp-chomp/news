@@ -166,9 +166,19 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
         body: JSON.stringify({ url: extractUrl }),
       })
 
-      if (!response.ok) throw new Error('Failed to extract URL')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Failed to extract URL (${response.status}: ${response.statusText})`)
+      }
 
-      const { metadata } = await response.json()
+      const data = await response.json()
+
+      // Validate response structure
+      if (!data.metadata) {
+        throw new Error('Invalid response: missing metadata')
+      }
+
+      const { metadata } = data
 
       // Create a story block with extracted data
       const storyResponse = await fetch(`/api/issues/${issue.id}/blocks`, {
@@ -178,16 +188,19 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
           type: 'story',
           sort_order: blocks.length,
           data: {
-            title: metadata.title,
-            blurb: metadata.description,
-            image_url: metadata.image,
-            image_alt: metadata.title,
-            link: metadata.url,
+            title: metadata.title || '',
+            blurb: metadata.description || '',
+            image_url: metadata.image || '',
+            image_alt: metadata.title || '',
+            link: metadata.url || extractUrl,
           },
         }),
       })
 
-      if (!storyResponse.ok) throw new Error('Failed to create story block')
+      if (!storyResponse.ok) {
+        const errorData = await storyResponse.json().catch(() => ({}))
+        throw new Error(errorData.error || `Failed to create story block (${storyResponse.status}: ${storyResponse.statusText})`)
+      }
 
       const newBlock = await storyResponse.json()
       setBlocks([...blocks, newBlock])

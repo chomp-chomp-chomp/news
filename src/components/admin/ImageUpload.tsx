@@ -34,9 +34,17 @@ export default function ImageUpload({ onUpload, currentImage, label = 'Image' }:
     try {
       // Get authentication parameters from our API
       const authResponse = await fetch('/api/imagekit/auth')
-      if (!authResponse.ok) throw new Error('Failed to get auth')
+      if (!authResponse.ok) {
+        const errorData = await authResponse.json().catch(() => ({}))
+        throw new Error(errorData.error || `Failed to get authentication (${authResponse.status}: ${authResponse.statusText})`)
+      }
 
       const authData = await authResponse.json()
+
+      // Validate auth data
+      if (!authData.signature || !authData.token || !authData.urlEndpoint) {
+        throw new Error('Invalid authentication response')
+      }
 
       // Create form data
       const formData = new FormData()
@@ -53,9 +61,17 @@ export default function ImageUpload({ onUpload, currentImage, label = 'Image' }:
         body: formData,
       })
 
-      if (!uploadResponse.ok) throw new Error('Upload failed')
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json().catch(() => ({}))
+        throw new Error(errorData.error || errorData.message || `Upload failed (${uploadResponse.status}: ${uploadResponse.statusText})`)
+      }
 
       const result = await uploadResponse.json()
+
+      // Validate upload result
+      if (!result.url) {
+        throw new Error('Upload succeeded but no URL returned')
+      }
 
       // Set preview and call callback
       setPreviewUrl(result.url)
