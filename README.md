@@ -47,13 +47,15 @@ A production-ready, self-hosted newsletter platform built with Next.js, Supabase
 
 ## Tech Stack
 
-- **Framework**: Next.js 14 (App Router, TypeScript)
+- **Framework**: Next.js 16 (App Router, TypeScript)
 - **Database**: Supabase (Postgres)
 - **Authentication**: Supabase Auth
 - **Email**: Resend
 - **Email Templates**: React Email
 - **Image Storage**: ImageKit
 - **Styling**: CSS Custom Properties + Tailwind
+- **Testing**: Jest + React Testing Library
+- **CI/CD**: GitHub Actions
 - **Hosting**: Vercel (recommended)
 
 ## Getting Started
@@ -417,6 +419,125 @@ RATE_LIMIT_SEND_TEST_PER_HOUR=10     # Test sends per user per hour
 ```env
 EMAIL_BATCH_SIZE=100          # Emails per batch
 EMAIL_BATCH_DELAY_MS=1000     # Delay between batches (ms)
+```
+
+## Testing
+
+The project uses Jest and React Testing Library for automated testing.
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+```
+
+### Test Structure
+
+Tests are organized in the `src/__tests__/` directory:
+
+```
+src/__tests__/
+├── lib/
+│   ├── validation.test.ts    # Email validation tests
+│   ├── rate-limit.test.ts    # Rate limiting tests
+│   └── logger.test.ts        # Logging utility tests
+```
+
+### Writing Tests
+
+When adding new features, include tests that:
+- Test utility functions with various inputs
+- Mock external dependencies (Supabase, Resend)
+- Cover edge cases and error conditions
+
+Example test pattern:
+
+```typescript
+import { isValidEmail } from '@/lib/validation'
+
+describe('Email Validation', () => {
+  it('should return true for valid emails', () => {
+    expect(isValidEmail('test@example.com')).toBe(true)
+  })
+})
+```
+
+## CI/CD
+
+The project uses GitHub Actions for continuous integration and deployment.
+
+### GitHub Actions Workflows
+
+The CI workflow (`.github/workflows/ci.yml`) runs on every push and pull request:
+
+| Job | Description |
+|-----|-------------|
+| **Lint** | Runs ESLint to check code quality |
+| **Test** | Runs Jest test suite |
+| **Build** | Builds the Next.js application |
+| **Type Check** | Runs TypeScript compiler to verify types |
+
+### Workflow Triggers
+
+- **Push to main**: Runs full CI pipeline
+- **Pull requests to main**: Runs full CI pipeline to validate changes
+
+### Required Status Checks
+
+Configure branch protection rules in GitHub to require:
+- Lint job must pass
+- Test job must pass
+- Build job must pass
+- Type check must pass
+
+### Setting Up CI
+
+1. Push code to GitHub
+2. CI automatically runs on push/PR
+3. View results in the **Actions** tab
+4. Configure branch protection rules for additional safety
+
+### Environment Variables in CI
+
+The build job uses placeholder values for environment variables. For actual deployment:
+1. Add secrets in GitHub repository settings
+2. Reference secrets in workflow file
+
+## Error Handling
+
+For detailed documentation on error handling patterns, error codes, and API responses, see:
+
+📄 **[Error Handling Documentation](docs/ERRORS.md)**
+
+### Quick Reference
+
+| Status Code | Meaning |
+|-------------|---------|
+| 200 | Success |
+| 400 | Bad request / Validation error |
+| 401 | Unauthorized |
+| 403 | Forbidden |
+| 404 | Not found |
+| 429 | Rate limit exceeded |
+| 500 | Server error |
+
+### Logging
+
+The platform uses structured JSON logging:
+
+```typescript
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger({ userId: 'user-123' })
+logger.info('Action completed', { details: 'here' })
+logger.error('Something failed', error)
 ```
 
 ## Troubleshooting
