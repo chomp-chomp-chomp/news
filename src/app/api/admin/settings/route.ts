@@ -7,7 +7,7 @@ const updateSettingsSchema = z.record(z.string(), z.string())
 
 /**
  * GET /api/admin/settings
- * Get all site settings
+ * Get all site settings (public endpoint - no auth required)
  */
 export async function GET(request: NextRequest) {
   try {
