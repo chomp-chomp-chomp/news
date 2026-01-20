@@ -4,6 +4,10 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 
 const updateSettingsSchema = z.record(z.string(), z.string())
+type SiteSettingRow = {
+  key: string
+  value: string | null
+}
 
 /**
  * GET /api/admin/settings
@@ -24,10 +28,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Convert array to key-value object
-    const settings = data.reduce((acc, setting) => {
-      acc[setting.key] = setting.value || ''
+    const settings = (data ?? []).reduce<Record<string, string>>((acc, setting: SiteSettingRow) => {
+      acc[setting.key] = setting.value ?? ''
       return acc
-    }, {} as Record<string, string>)
+    }, {})
 
     return NextResponse.json(settings, { status: 200 })
   } catch (error) {
