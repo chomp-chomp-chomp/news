@@ -57,6 +57,43 @@ export async function getPublicationById(id: string) {
   return data as Publication | null
 }
 
+// Maximum number of attempts to find a unique slug before using a random suffix
+const MAX_SLUG_ATTEMPTS = 100
+
+/**
+ * Generate a unique slug by appending a number if needed
+ */
+async function generateUniqueSlug(baseSlug: string): Promise<string> {
+  const supabase = await createAdminClient()
+  
+  // Build list of candidate slugs to check
+  const candidateSlugs = [baseSlug]
+  for (let i = 2; i <= MAX_SLUG_ATTEMPTS; i++) {
+    candidateSlugs.push(`${baseSlug}-${i}`)
+  }
+  
+  // Query all candidate slugs at once for efficiency
+  const { data: existingSlugs } = await supabase
+    .from('publications')
+    .select('slug')
+    .in('slug', candidateSlugs)
+    .is('deleted_at', null)
+
+  // Build a set of existing slugs for fast lookup
+  const existingSet = new Set(existingSlugs?.map((s: { slug: string }) => s.slug) || [])
+  
+  // Find the first available slug
+  for (const candidate of candidateSlugs) {
+    if (!existingSet.has(candidate)) {
+      return candidate
+    }
+  }
+
+  // If all attempts are exhausted, use a short random suffix
+  const randomSuffix = Math.random().toString(36).substring(2, 8)
+  return `${baseSlug}-${randomSuffix}`
+}
+
 /**
  * Create a new publication
  */
@@ -68,10 +105,17 @@ export async function createPublication(
 
   console.log('Creating publication:', { publication, userId })
 
-  // Create publication
+  // Generate a unique slug if needed
+  const uniqueSlug = await generateUniqueSlug(publication.slug)
+  
+  if (uniqueSlug !== publication.slug) {
+    console.log(`Slug "${publication.slug}" already exists, using "${uniqueSlug}" instead`)
+  }
+
+  // Create publication with unique slug
   const { data, error } = await supabase
     .from('publications')
-    .insert(publication)
+    .insert({ ...publication, slug: uniqueSlug })
     .select()
     .single()
 
