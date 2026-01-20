@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthApi } from '@/lib/auth'
 import { exportSubscribersToCSV } from '@/lib/db/subscribers'
 
 export async function GET(request: NextRequest) {
   try {
     // Require authentication
-    const user = await requireAuth()
+    const user = await requireAuthApi()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthApi } from '@/lib/auth'
 import { addSubscriberToList, removeSubscriberFromList } from '@/lib/db/lists'
 import { z } from 'zod'
 
@@ -13,7 +13,7 @@ const addSubscriberSchema = z.object({
 
 export async function POST(request: NextRequest, context: RouteContext) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthApi()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
 export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthApi()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
