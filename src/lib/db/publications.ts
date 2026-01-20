@@ -159,7 +159,10 @@ export async function updatePublication(
     .select()
     .single()
 
-  if (error) throw error
+  if (error) {
+    console.error('Error updating publication:', error)
+    throw error
+  }
   return data as Publication
 }
 

@@ -188,7 +188,10 @@ export async function createBlock(block: BlockInsert) {
     .select()
     .single()
 
-  if (error) throw error
+  if (error) {
+    console.error('Error creating block:', error)
+    throw error
+  }
   return data as Block
 }
 
@@ -205,7 +208,10 @@ export async function updateBlock(id: string, updates: BlockUpdate) {
     .select()
     .single()
 
-  if (error) throw error
+  if (error) {
+    console.error('Error updating block:', error)
+    throw error
+  }
   return data as Block
 }
 
@@ -217,7 +223,10 @@ export async function deleteBlock(id: string) {
 
   const { error } = await supabase.from('blocks').delete().eq('id', id)
 
-  if (error) throw error
+  if (error) {
+    console.error('Error deleting block:', error)
+    throw error
+  }
 }
 
 /**
