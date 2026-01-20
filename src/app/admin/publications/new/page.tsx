@@ -9,36 +9,45 @@ export default async function NewPublicationPage() {
   async function createPublicationAction(formData: FormData) {
     'use server'
 
-    const user = await requireAuth()
+    try {
+      const user = await requireAuth()
 
-    const name = formData.get('name') as string
-    const slug = formData.get('slug') as string
-    const description = formData.get('description') as string
-    const fromName = formData.get('fromName') as string
-    const fromEmail = formData.get('fromEmail') as string
-    const replyToEmail = formData.get('replyToEmail') as string
-    const isPublic = formData.get('isPublic') === 'on'
+      const name = formData.get('name') as string
+      const slug = formData.get('slug') as string
+      const description = formData.get('description') as string
+      const fromName = formData.get('fromName') as string
+      const fromEmail = formData.get('fromEmail') as string
+      const replyToEmail = formData.get('replyToEmail') as string
+      const isPublic = formData.get('isPublic') === 'on'
 
-    // Basic validation
-    if (!name || !slug || !fromName || !fromEmail) {
-      throw new Error('Missing required fields')
+      // Basic validation
+      if (!name || !slug || !fromName || !fromEmail) {
+        throw new Error('Missing required fields')
+      }
+
+      console.log('Creating publication with:', { name, slug, fromName, fromEmail })
+
+      // Create publication
+      const publication = await createPublication(
+        {
+          name,
+          slug: slug.toLowerCase().replace(/\s+/g, '-'),
+          description: description || null,
+          from_name: fromName,
+          from_email: fromEmail,
+          reply_to_email: replyToEmail || null,
+          is_public: isPublic,
+        },
+        user.id
+      )
+
+      console.log('Publication created:', publication.id)
+
+      redirect(`/admin/publications/${publication.id}`)
+    } catch (error) {
+      console.error('Failed to create publication:', error)
+      throw error
     }
-
-    // Create publication
-    const publication = await createPublication(
-      {
-        name,
-        slug: slug.toLowerCase().replace(/\s+/g, '-'),
-        description: description || null,
-        from_name: fromName,
-        from_email: fromEmail,
-        reply_to_email: replyToEmail || null,
-        is_public: isPublic,
-      },
-      user.id
-    )
-
-    redirect(`/admin/publications/${publication.id}`)
   }
 
   return (
