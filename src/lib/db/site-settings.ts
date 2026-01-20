@@ -9,6 +9,11 @@ export interface SiteSettings {
   twitter_image_url: string
 }
 
+type SiteSettingRow = {
+  key: string
+  value: string | null
+}
+
 /**
  * Get site settings from database with fallback to environment variables
  */
@@ -26,7 +31,8 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     }
 
     // Convert array to key-value object
-    const settings = data.reduce((acc, setting) => {
+    const rows = (data ?? []) as SiteSettingRow[]
+    const settings = rows.reduce((acc: Record<string, string>, setting) => {
       acc[setting.key] = setting.value || ''
       return acc
     }, {} as Record<string, string>)
