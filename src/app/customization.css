@@ -1,0 +1,265 @@
+/**
+ * Newsletter Platform - CSS Customization Guide
+ * 
+ * This file provides sample CSS overrides and customization options
+ * for the newsletter platform. Copy sections you want to customize
+ * into your own custom CSS file or override them in globals.css.
+ */
+
+/**
+ * ===================================
+ * FONT SIZE CUSTOMIZATION
+ * ===================================
+ * Adjust these values to change font sizes throughout the application.
+ */
+
+/* Base font sizes */
+:root {
+  --font-size-base: 16px;        /* Default body text */
+  --font-size-sm: 14px;          /* Small text */
+  --font-size-lg: 18px;          /* Large text */
+  --font-size-xl: 20px;          /* Extra large text */
+  
+  /* Heading sizes */
+  --font-size-h1: 2.5rem;        /* 40px */
+  --font-size-h2: 2rem;          /* 32px */
+  --font-size-h3: 1.5rem;        /* 24px */
+  --font-size-h4: 1.25rem;       /* 20px */
+  --font-size-h5: 1.125rem;      /* 18px */
+  --font-size-h6: 1rem;          /* 16px */
+}
+
+/* Apply custom font sizes */
+body {
+  font-size: var(--font-size-base);
+}
+
+h1 { font-size: var(--font-size-h1); }
+h2 { font-size: var(--font-size-h2); }
+h3 { font-size: var(--font-size-h3); }
+h4 { font-size: var(--font-size-h4); }
+h5 { font-size: var(--font-size-h5); }
+h6 { font-size: var(--font-size-h6); }
+
+/**
+ * ===================================
+ * COLOR SCHEME CUSTOMIZATION
+ * ===================================
+ * Override these variables to change the color scheme.
+ */
+
+/* Light mode colors */
+:root {
+  /* Brand colors */
+  --color-accent: #e73b42;        /* Primary brand color */
+  --color-accent-hover: #d12d34;  /* Hover state */
+  
+  /* Background colors */
+  --color-bg: #fdfdfd;            /* Page background */
+  --color-surface: #ffffff;       /* Card/surface background */
+  --color-sidebar-bg: #f5f5f5;    /* Sidebar background */
+  
+  /* Text colors */
+  --color-text: #353535;          /* Primary text */
+  --color-text-muted: #7d7d7d;   /* Secondary text */
+  --color-text-light: #9d9d9d;   /* Tertiary text */
+  
+  /* Border colors */
+  --color-border: #e0e0e0;        /* Default border */
+}
+
+/* Dark mode colors */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-accent: #ff6b7a;
+    --color-accent-hover: #ff8590;
+    --color-bg: #231f1f;
+    --color-surface: #2a2a2a;
+    --color-sidebar-bg: #2b2626;
+    --color-text: #d9d4d4;
+    --color-text-muted: #b9b4b4;
+    --color-text-light: #948f8f;
+    --color-border: #3b3636;
+  }
+}
+
+/**
+ * ===================================
+ * SAMPLE ALTERNATIVE COLOR SCHEMES
+ * ===================================
+ * Uncomment one of these sections to try alternative color schemes.
+ */
+
+/* Blue Theme */
+/*
+:root {
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+}
+*/
+
+/* Green Theme */
+/*
+:root {
+  --color-accent: #10b981;
+  --color-accent-hover: #059669;
+}
+*/
+
+/* Purple Theme */
+/*
+:root {
+  --color-accent: #8b5cf6;
+  --color-accent-hover: #7c3aed;
+}
+*/
+
+/* Orange Theme */
+/*
+:root {
+  --color-accent: #f97316;
+  --color-accent-hover: #ea580c;
+}
+*/
+
+/**
+ * ===================================
+ * TYPOGRAPHY CUSTOMIZATION
+ * ===================================
+ * Change fonts and text styling.
+ */
+
+/* Custom font families */
+:root {
+  --font-primary: 'Inter', sans-serif;
+  --font-secondary: 'Source Sans 3', sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-mono: 'Courier New', monospace;
+}
+
+/* Apply custom fonts */
+/*
+body {
+  font-family: var(--font-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-secondary);
+}
+*/
+
+/* Font weights */
+:root {
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+/* Line heights */
+:root {
+  --line-height-tight: 1.3;
+  --line-height-base: 1.7;
+  --line-height-relaxed: 1.8;
+}
+
+/**
+ * ===================================
+ * SPACING CUSTOMIZATION
+ * ===================================
+ * Adjust spacing throughout the application.
+ */
+
+:root {
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 20px;
+  --spacing-lg: 30px;
+  --spacing-xl: 40px;
+  --spacing-2xl: 60px;
+}
+
+/**
+ * ===================================
+ * COMPONENT CUSTOMIZATION
+ * ===================================
+ * Customize specific UI components.
+ */
+
+/* Buttons */
+.btn {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent-hover);
+}
+
+/* Cards */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Forms */
+.form-input {
+  font-size: var(--font-size-base);
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.form-input:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/**
+ * ===================================
+ * RESPONSIVE CUSTOMIZATION
+ * ===================================
+ * Mobile-specific overrides.
+ */
+
+@media (max-width: 768px) {
+  :root {
+    --font-size-base: 15px;
+    --font-size-h1: 2rem;
+    --font-size-h2: 1.75rem;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+  }
+}
+
+/**
+ * ===================================
+ * EMAIL TEMPLATE CUSTOMIZATION
+ * ===================================
+ * These styles are NOT applied to emails (which use inline styles).
+ * To customize email appearance, update the publication branding settings:
+ * 
+ * - Logo URL: Your publication logo
+ * - Accent Color: Primary color for links and buttons in emails
+ * - Header Image URL: Optional header banner image
+ * 
+ * Email styles are generated from the branding settings in the database.
+ */
