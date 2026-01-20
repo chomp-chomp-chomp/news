@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient, createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Database } from '@/types/database'
 
@@ -51,10 +51,11 @@ export async function isPublicationAdmin(
   publicationId: string,
   userId?: string
 ): Promise<boolean> {
-  const supabase = await createClient()
   const user = userId || (await getUser())?.id
 
   if (!user) return false
+
+  const supabase = await createAdminClient()
 
   const { data, error } = await supabase
     .from('publication_admins')

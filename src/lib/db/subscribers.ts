@@ -17,7 +17,7 @@ export async function getPublicationSubscribers(
   }
 ) {
   try {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
 
     let query = supabase
       .from('subscribers')
