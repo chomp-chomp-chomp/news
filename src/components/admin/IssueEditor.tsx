@@ -235,6 +235,55 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
     }
   }
 
+  async function sendToSubscribers() {
+    setSaving(true)
+    try {
+      // First, get the subscriber count
+      const countResponse = await fetch(`/api/publications/${publication.id}?includeSubscriberCount=true`)
+      if (!countResponse.ok) {
+        throw new Error('Failed to get subscriber count')
+      }
+      
+      const pubData = await countResponse.json()
+      const subscriberCount = pubData.subscriberCount || 0
+      
+      if (subscriberCount === 0) {
+        alert('No active subscribers to send to.')
+        return
+      }
+
+      // Show confirmation dialog
+      const confirmed = confirm(
+        `Send this newsletter to ${subscriberCount} active subscriber${subscriberCount !== 1 ? 's' : ''}?\n\n` +
+        `This action cannot be undone.`
+      )
+      
+      if (!confirmed) return
+
+      // Send campaign
+      const response = await fetch('/api/send/campaign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          issueId: issue.id,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to send campaign')
+      }
+
+      const result = await response.json()
+      alert(`Campaign started! Sending to ${result.recipientCount} subscribers.`)
+      router.refresh()
+    } catch (error: any) {
+      alert(`Failed to send campaign: ${error.message}`)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   function getDefaultBlockData(type: Block['type']) {
     switch (type) {
       case 'story':
@@ -272,6 +321,11 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
           <button onClick={sendTestEmail} className="btn btn-secondary">
             Send Test
           </button>
+          {status === 'published' && (
+            <button onClick={sendToSubscribers} className="btn btn-primary" disabled={saving}>
+              {saving ? 'Sending...' : 'Send to Subscribers'}
+            </button>
+          )}
           <Link href={`/admin/publications/${publication.id}/issues/${issue.id}/preview`} className="btn btn-secondary">
             Preview
           </Link>

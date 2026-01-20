@@ -1,6 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuthApi, isPublicationAdmin } from '@/lib/auth'
 import { deletePublication, getPublicationById } from '@/lib/db/publications'
+import { getActiveSubscribers } from '@/lib/db/subscribers'
+
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user = await requireAuthApi()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
+    const { id } = await context.params
+
+    // Verify publication exists and user has access
+    const publication = await getPublicationById(id)
+    if (!publication) {
+      return NextResponse.json({ error: 'Publication not found' }, { status: 404 })
+    }
+
+    // Verify user is admin of the publication
+    const isAdmin = await isPublicationAdmin(id, user.id)
+    if (!isAdmin) {
+      return NextResponse.json(
+        { error: 'Unauthorized - you must be an admin of this publication' },
+        { status: 403 }
+      )
+    }
+
+    // Check if subscriber count is requested
+    const searchParams = request.nextUrl.searchParams
+    const includeSubscriberCount = searchParams.get('includeSubscriberCount') === 'true'
+    
+    let subscriberCount = 0
+    if (includeSubscriberCount) {
+      const subscribers = await getActiveSubscribers(id)
+      subscriberCount = subscribers.length
+    }
+
+    return NextResponse.json({
+      ...publication,
+      subscriberCount,
+    })
+  } catch (error) {
+    console.error('Get publication error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+    return NextResponse.json(
+      { error: errorMessage },
+      { status: 500 }
+    )
+  }
+}
 
 export async function DELETE(
   request: NextRequest,
