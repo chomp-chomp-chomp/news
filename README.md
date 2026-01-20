@@ -167,7 +167,6 @@ EMAIL_BATCH_DELAY_MS=1000
 # Branding & Metadata (Optional)
 NEXT_PUBLIC_SITE_NAME=Newsletter Platform
 NEXT_PUBLIC_SITE_DESCRIPTION=Subscribe to quality newsletters curated by experts
-# NEXT_PUBLIC_LOGO_URL=https://your-domain.com/logo.png
 # NEXT_PUBLIC_OG_IMAGE=https://your-domain.com/og-image.png
 ```
 
@@ -298,9 +297,6 @@ You can customize the global site branding (homepage, page titles, OpenGraph tag
    
    # Site description - shown on homepage and in meta tags
    NEXT_PUBLIC_SITE_DESCRIPTION=Your custom description here
-   
-   # Optional: Logo URL for your site
-   NEXT_PUBLIC_LOGO_URL=https://your-domain.com/logo.png
    
    # Optional: OpenGraph image for social media sharing (1200x630px recommended)
    NEXT_PUBLIC_OG_IMAGE=https://your-domain.com/og-image.png
