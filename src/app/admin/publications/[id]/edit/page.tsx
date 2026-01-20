@@ -48,20 +48,16 @@ export default async function EditPublicationPage({ params }: PageProps) {
         }
       }
 
-      console.log('Updating publication with:', { id, name, slug, fromName, fromEmail })
-
-      // Update publication
+      // Don't allow changing the slug to prevent breaking existing URLs
+      // Only update other fields
       await updatePublication(id, {
         name,
-        slug: slug.toLowerCase().replace(/\s+/g, '-'),
         description: description || null,
         from_name: fromName,
         from_email: fromEmail,
         reply_to_email: replyToEmail || null,
         is_public: isPublic,
       })
-
-      console.log('Publication updated:', id)
 
       // Redirect on success - redirect() throws a special error that Next.js handles
       redirect(`/admin/publications/${id}`)
@@ -95,6 +91,7 @@ export default async function EditPublicationPage({ params }: PageProps) {
         initialData={publication}
         cancelHref={`/admin/publications/${id}`}
         submitLabel="Update Publication"
+        disableSlugEdit
       />
     </div>
   )

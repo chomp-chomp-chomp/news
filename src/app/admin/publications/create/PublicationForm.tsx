@@ -20,6 +20,7 @@ type Props = {
   initialData?: Publication
   cancelHref?: string
   submitLabel?: string
+  disableSlugEdit?: boolean
 }
 
 const initialState: FormState = {}
@@ -28,7 +29,8 @@ export default function PublicationForm({
   action, 
   initialData, 
   cancelHref = '/admin/publications',
-  submitLabel = 'Create Publication'
+  submitLabel = 'Create Publication',
+  disableSlugEdit = false
 }: Props) {
   const [state, formAction] = useFormState(action, initialState)
 
@@ -85,11 +87,12 @@ export default function PublicationForm({
                 pattern="[a-z0-9\-]+"
                 title="Lowercase letters, numbers, and hyphens only"
                 required
-                style={{ flex: 1 }}
+                disabled={disableSlugEdit}
+                style={{ flex: 1, ...(disableSlugEdit ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}
               />
             </div>
             <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
-              Lowercase letters, numbers, and hyphens only
+              {disableSlugEdit ? 'URL slug cannot be changed after creation' : 'Lowercase letters, numbers, and hyphens only'}
             </p>
           </div>
 
