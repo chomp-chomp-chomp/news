@@ -82,7 +82,8 @@ export default async function NewPublicationPage() {
                   name="slug"
                   className="form-input"
                   placeholder="my-newsletter"
-                  pattern="[a-z0-9-]+"
+                  pattern="[a-z0-9\-]+"
+                  title="Lowercase letters, numbers, and hyphens only"
                   required
                   style={{ flex: 1 }}
                 />
