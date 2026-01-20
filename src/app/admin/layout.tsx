@@ -58,6 +58,16 @@ export default async function AdminLayout({
                   Publications
                 </Link>
               </li>
+              <li style={{ marginBottom: '0.5rem' }}>
+                <Link href="/admin/settings" style={{
+                  display: 'block',
+                  padding: '0.5rem 0.75rem',
+                  borderRadius: 'var(--radius-sm)',
+                  transition: 'background 0.2s',
+                }}>
+                  Site Settings
+                </Link>
+              </li>
             </ul>
           </div>
 

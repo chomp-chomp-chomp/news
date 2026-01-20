@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthApi } from '@/lib/auth'
 import { importSubscribersFromCSV } from '@/lib/db/subscribers'
 import { z } from 'zod'
 
@@ -11,7 +11,7 @@ const importSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Require authentication
-    const user = await requireAuth()
+    const user = await requireAuthApi()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

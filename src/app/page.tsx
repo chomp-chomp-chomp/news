@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import { getPublicPublications } from '@/lib/db/publications'
+import { getSiteSettings } from '@/lib/db/site-settings'
 import { Database } from '@/types/database'
 
 type Publication = Database['public']['Tables']['publications']['Row']
 
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Newsletter Platform";
-const siteDescription = process.env.NEXT_PUBLIC_SITE_DESCRIPTION || "Subscribe to quality newsletters curated by experts";
-
 export default async function HomePage() {
+  const settings = await getSiteSettings()
+  
   let publications: Publication[]
   try {
     publications = await getPublicPublications()
@@ -19,9 +19,9 @@ export default async function HomePage() {
   return (
     <main className="container" style={{ paddingTop: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)' }}>
       <section style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>{siteName}</h1>
+        <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>{settings.site_name}</h1>
         <p style={{ fontSize: '1.25rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-          {siteDescription}
+          {settings.site_description}
         </p>
       </section>
 
