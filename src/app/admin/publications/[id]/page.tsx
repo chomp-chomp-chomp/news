@@ -69,7 +69,7 @@ export default async function PublicationManagePage({ params }: PageProps) {
 
       {/* Quick Actions */}
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem' }}>
-        <Link href={`/admin/publications/${id}/issues/new`} className="btn btn-primary">
+        <Link href={`/admin/publications/${id}/issues/create`} className="btn btn-primary">
           New Issue
         </Link>
         <Link href={`/admin/publications/${id}/subscribers`} className="btn btn-secondary">

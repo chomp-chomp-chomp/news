@@ -32,7 +32,7 @@ export default async function AdminDashboard() {
           <p className="text-muted" style={{ marginBottom: '2rem' }}>
             You don't have any publications yet. Create your first newsletter to get started.
           </p>
-          <Link href="/admin/publications/new" className="btn btn-primary">
+          <Link href="/admin/publications/create" className="btn btn-primary">
             Create Publication
           </Link>
         </div>
