@@ -57,46 +57,41 @@ export async function getPublicationById(id: string) {
   return data as Publication | null
 }
 
+// Maximum number of attempts to find a unique slug before using a random suffix
+const MAX_SLUG_ATTEMPTS = 100
+
 /**
  * Generate a unique slug by appending a number if needed
  */
 async function generateUniqueSlug(baseSlug: string): Promise<string> {
   const supabase = await createAdminClient()
   
-  // Check if the base slug exists
-  const { data: existing } = await supabase
+  // Build list of candidate slugs to check
+  const candidateSlugs = [baseSlug]
+  for (let i = 2; i <= MAX_SLUG_ATTEMPTS; i++) {
+    candidateSlugs.push(`${baseSlug}-${i}`)
+  }
+  
+  // Query all candidate slugs at once for efficiency
+  const { data: existingSlugs } = await supabase
     .from('publications')
     .select('slug')
-    .eq('slug', baseSlug)
+    .in('slug', candidateSlugs)
     .is('deleted_at', null)
-    .maybeSingle()
 
-  // If slug doesn't exist, use it as-is
-  if (!existing) {
-    return baseSlug
-  }
-
-  // Generate numbered variations until we find one that doesn't exist
-  let counter = 2
-  while (counter < 100) { // Safety limit to prevent infinite loops
-    const candidateSlug = `${baseSlug}-${counter}`
-    
-    const { data: existingCandidate } = await supabase
-      .from('publications')
-      .select('slug')
-      .eq('slug', candidateSlug)
-      .is('deleted_at', null)
-      .maybeSingle()
-
-    if (!existingCandidate) {
-      return candidateSlug
+  // Build a set of existing slugs for fast lookup
+  const existingSet = new Set(existingSlugs?.map((s: { slug: string }) => s.slug) || [])
+  
+  // Find the first available slug
+  for (const candidate of candidateSlugs) {
+    if (!existingSet.has(candidate)) {
+      return candidate
     }
-    
-    counter++
   }
 
-  // If we couldn't find a unique slug after 100 attempts, use timestamp
-  return `${baseSlug}-${Date.now()}`
+  // If all attempts are exhausted, use a short random suffix
+  const randomSuffix = Math.random().toString(36).substring(2, 8)
+  return `${baseSlug}-${randomSuffix}`
 }
 
 /**
