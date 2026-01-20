@@ -15,21 +15,30 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { url } = extractSchema.parse(body)
 
-    // Fetch the page
+    console.log('Extracting metadata from URL:', url)
+
+    // Fetch the page with timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; NewsletterBot/1.0)',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       },
-    })
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId))
 
     if (!response.ok) {
+      console.error('Failed to fetch URL:', response.status, response.statusText)
       return NextResponse.json(
-        { error: `Failed to fetch URL: ${response.statusText}` },
+        { error: `Failed to fetch URL: ${response.status} ${response.statusText}` },
         { status: 400 }
       )
     }
 
     const html = await response.text()
+    console.log('Fetched HTML, length:', html.length)
 
     // Extract metadata using regex (simple but effective for Open Graph tags)
     const metadata = {
@@ -48,6 +57,8 @@ export async function POST(request: NextRequest) {
       url: extractMeta(html, 'og:url') || url,
     }
 
+    console.log('Extracted metadata:', metadata)
+
     // Clean up the description - get first paragraph if it's too long
     if (metadata.description.length > 300) {
       metadata.description = metadata.description.substring(0, 297) + '...'
@@ -65,9 +76,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Handle abort/timeout errors
+    if (error.name === 'AbortError') {
+      console.error('Extract URL timeout:', error)
+      return NextResponse.json(
+        { error: 'Request timed out while fetching URL' },
+        { status: 408 }
+      )
+    }
+
+    // Handle network errors
+    if (error.cause && error.cause.code) {
+      console.error('Extract URL network error:', error.cause.code, error.message)
+      return NextResponse.json(
+        { error: `Network error: ${error.message}` },
+        { status: 500 }
+      )
+    }
+
     console.error('Extract URL error:', error)
     return NextResponse.json(
-      { error: 'Failed to extract URL metadata' },
+      { error: 'Failed to extract URL metadata', details: error.message },
       { status: 500 }
     )
   }

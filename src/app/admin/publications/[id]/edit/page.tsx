@@ -4,6 +4,7 @@ import { getPublicationById, updatePublication } from '@/lib/db/publications'
 import { notFound } from 'next/navigation'
 import PublicationForm from '../../create/PublicationForm'
 import { FormState } from '../../create/types'
+import DeletePublicationButton from '@/components/admin/DeletePublicationButton'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -92,6 +93,20 @@ export default async function EditPublicationPage({ params }: PageProps) {
         submitLabel="Update Publication"
         disableSlugEdit
       />
+
+      {/* Danger Zone */}
+      <div className="card" style={{ marginTop: '3rem', borderColor: 'var(--color-danger)', borderWidth: '2px' }}>
+        <h2 style={{ fontSize: '1.5rem', marginBottom: 'var(--spacing-md)', color: 'var(--color-danger-text)' }}>
+          Danger Zone
+        </h2>
+        <p className="text-muted" style={{ marginBottom: 'var(--spacing-md)' }}>
+          Deleting this publication is permanent and cannot be undone. This will also delete all issues, content blocks, and subscribers associated with this publication.
+        </p>
+        <DeletePublicationButton
+          publicationId={publication.id}
+          publicationName={publication.name}
+        />
+      </div>
     </div>
   )
 }

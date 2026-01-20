@@ -164,6 +164,28 @@ export async function updatePublication(
 }
 
 /**
+ * Delete publication (soft delete)
+ */
+export async function deletePublication(id: string) {
+  try {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+      .from('publications')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) {
+      console.error('Error deleting publication:', error)
+      throw new Error(`Failed to delete publication: ${error.message}`)
+    }
+  } catch (error) {
+    console.error('Error in deletePublication:', error)
+    throw error
+  }
+}
+
+/**
  * Get subscriber stats for publication
  */
 export async function getPublicationStats(publicationId: string) {

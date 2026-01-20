@@ -287,3 +287,25 @@ export async function duplicateIssue(issueId: string, newSlug: string) {
 
   return newIssue as Issue
 }
+
+/**
+ * Delete issue (soft delete)
+ */
+export async function deleteIssue(id: string) {
+  try {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+      .from('issues')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) {
+      console.error('Error deleting issue:', error)
+      throw new Error(`Failed to delete issue: ${error.message}`)
+    }
+  } catch (error) {
+    console.error('Error in deleteIssue:', error)
+    throw error
+  }
+}
