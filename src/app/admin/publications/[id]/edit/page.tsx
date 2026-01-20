@@ -39,6 +39,11 @@ export default async function EditPublicationPage({ params }: PageProps) {
       const fromEmail = formData.get('fromEmail') as string
       const replyToEmail = formData.get('replyToEmail') as string
       const isPublic = formData.get('isPublic') === 'on'
+      
+      // Branding fields
+      const logoUrl = formData.get('logoUrl') as string
+      const accentColor = formData.get('accentColor') as string
+      const headerImageUrl = formData.get('headerImageUrl') as string
 
       // Basic validation
       if (!name || !fromName || !fromEmail) {
@@ -47,6 +52,12 @@ export default async function EditPublicationPage({ params }: PageProps) {
           success: false
         }
       }
+
+      // Build brand object
+      const brand: any = {}
+      if (logoUrl) brand.logo_url = logoUrl
+      if (accentColor) brand.accent_color = accentColor
+      if (headerImageUrl) brand.header_image_url = headerImageUrl
 
       // Don't allow changing the slug to prevent breaking existing URLs
       // Only update other fields
@@ -57,6 +68,7 @@ export default async function EditPublicationPage({ params }: PageProps) {
         from_email: fromEmail,
         reply_to_email: replyToEmail || null,
         is_public: isPublic,
+        brand: Object.keys(brand).length > 0 ? brand : {},
       })
 
       // Redirect on success - redirect() throws a special error that Next.js handles

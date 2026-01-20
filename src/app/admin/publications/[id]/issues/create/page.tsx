@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { requirePublicationAdmin } from '@/lib/auth'
 import { getPublicationById } from '@/lib/db/publications'
 import { createIssue } from '@/lib/db/issues'
+import { getAvailableTemplates } from '@/lib/db/templates'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
@@ -18,7 +19,11 @@ export default async function NewIssuePage({ params }: PageProps) {
     return notFound()
   }
 
-  const publication = await getPublicationById(id)
+  const [publication, templates] = await Promise.all([
+    getPublicationById(id),
+    getAvailableTemplates(id),
+  ])
+  
   if (!publication) {
     return notFound()
   }
@@ -31,6 +36,7 @@ export default async function NewIssuePage({ params }: PageProps) {
     const subject = formData.get('subject') as string
     const slug = formData.get('slug') as string
     const preheader = formData.get('preheader') as string
+    const templateId = formData.get('templateId') as string
 
     // Basic validation
     if (!subject || !slug) {
@@ -45,6 +51,23 @@ export default async function NewIssuePage({ params }: PageProps) {
       preheader: preheader || null,
       status: 'draft',
     })
+    
+    // If a template was selected, apply it by creating blocks
+    if (templateId) {
+      const { createBlock } = await import('@/lib/db/blocks')
+      const template = templates.find(t => t.id === templateId)
+      
+      if (template && template.template_data.blocks) {
+        for (const [index, blockData] of template.template_data.blocks.entries()) {
+          await createBlock({
+            issue_id: issue.id,
+            type: blockData.type as any,
+            data: blockData.data,
+            position: index,
+          })
+        }
+      }
+    }
 
     redirect(`/admin/publications/${id}/issues/${issue.id}`)
   }
@@ -119,6 +142,29 @@ export default async function NewIssuePage({ params }: PageProps) {
                 Optional text that appears after the subject in email clients (max 150 characters)
               </p>
             </div>
+
+            {templates.length > 0 && (
+              <div>
+                <label htmlFor="templateId" className="form-label">
+                  Start from Template (Optional)
+                </label>
+                <select
+                  id="templateId"
+                  name="templateId"
+                  className="form-input"
+                >
+                  <option value="">-- Start with empty issue --</option>
+                  {templates.map((template) => (
+                    <option key={template.id} value={template.id}>
+                      {template.name} {template.is_global ? '(Global)' : ''}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Pre-populate your issue with content blocks from a template
+                </p>
+              </div>
+            )}
 
             <div style={{
               display: 'flex',

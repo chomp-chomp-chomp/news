@@ -68,7 +68,7 @@ export default async function PublicationManagePage({ params }: PageProps) {
       </div>
 
       {/* Quick Actions */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem' }}>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
         <Link href={`/admin/publications/${id}/issues/create`} className="btn btn-primary">
           New Issue
         </Link>
@@ -77,6 +77,9 @@ export default async function PublicationManagePage({ params }: PageProps) {
         </Link>
         <Link href={`/admin/publications/${id}/subscribers`} className="btn btn-secondary">
           Manage Subscribers
+        </Link>
+        <Link href={`/admin/publications/${id}/lists`} className="btn btn-secondary">
+          Manage Lists
         </Link>
         <Link href={`/n/${publication.slug}`} className="btn btn-secondary">
           View Public Page

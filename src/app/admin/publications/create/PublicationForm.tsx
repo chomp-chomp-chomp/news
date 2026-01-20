@@ -171,6 +171,84 @@ export default function PublicationForm({
             borderTop: '1px solid var(--color-border)',
           }}>
             <h3 style={{ fontSize: '1.25rem', marginBottom: 'var(--spacing-md)' }}>
+              Branding
+            </h3>
+
+            <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
+              <div>
+                <label htmlFor="logoUrl" className="form-label">
+                  Logo URL
+                </label>
+                <input
+                  type="url"
+                  id="logoUrl"
+                  name="logoUrl"
+                  className="form-input"
+                  placeholder="https://example.com/logo.png"
+                  defaultValue={(initialData?.brand as any)?.logo_url || ''}
+                />
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  URL to your publication logo (displayed in emails and public pages)
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="accentColor" className="form-label">
+                  Accent Color
+                </label>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input
+                    type="color"
+                    id="accentColor"
+                    name="accentColor"
+                    defaultValue={(initialData?.brand as any)?.accent_color || '#e73b42'}
+                    style={{ width: '60px', height: '40px', cursor: 'pointer' }}
+                  />
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="#e73b42"
+                    defaultValue={(initialData?.brand as any)?.accent_color || ''}
+                    pattern="^#[0-9A-Fa-f]{6}$"
+                    title="Hex color code (e.g., #e73b42)"
+                    style={{ flex: 1 }}
+                    onChange={(e) => {
+                      const colorPicker = document.getElementById('accentColor') as HTMLInputElement
+                      if (colorPicker && /^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+                        colorPicker.value = e.target.value
+                      }
+                    }}
+                  />
+                </div>
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Primary color used for links and accents in your emails
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="headerImageUrl" className="form-label">
+                  Header Image URL
+                </label>
+                <input
+                  type="url"
+                  id="headerImageUrl"
+                  name="headerImageUrl"
+                  className="form-input"
+                  placeholder="https://example.com/header.png"
+                  defaultValue={(initialData?.brand as any)?.header_image_url || ''}
+                />
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Optional header image for your email template
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div style={{
+            paddingTop: 'var(--spacing-md)',
+            borderTop: '1px solid var(--color-border)',
+          }}>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: 'var(--spacing-md)' }}>
               Visibility
             </h3>
 

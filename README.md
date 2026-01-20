@@ -18,9 +18,12 @@ A production-ready, self-hosted newsletter platform built with Next.js, Supabase
 
 ### 👥 Subscriber Management
 - Double opt-in confirmation flow
-- CSV import/export
+- Manual subscriber addition via UI form
+- CSV import/export with bulk operations
 - Automatic bounce and complaint handling
 - Subscriber status tracking (active, pending, unsubscribed, bounced)
+- **Publication lists** for subscriber segmentation
+- Assign subscribers to multiple lists for targeted campaigns
 
 ### 📊 Analytics & Tracking
 - Email opens and clicks (via Resend webhooks)
@@ -33,11 +36,14 @@ A production-ready, self-hosted newsletter platform built with Next.js, Supabase
 - Webhook signature verification
 - Admin-only access control
 
-### 🎨 Design
+### 🎨 Design & Customization
 - Based on chompchomp.cc design system
 - Responsive layouts
 - Dark mode support
 - Clean, minimal UI
+- **Dynamic branding** - Configure logo, accent colors, and header images per publication
+- **CSS customization** - Easily customize fonts, colors, spacing via CSS variables
+- **Reusable templates** - Pre-built newsletter templates for faster content creation
 
 ## Tech Stack
 
@@ -241,6 +247,13 @@ news/
 - `POST /api/send/campaign` - Send to all subscribers
 - `POST /api/upload/image` - Upload image to ImageKit
 - `DELETE /api/upload/image?fileId=xxx` - Delete image
+- `POST /api/admin/subscribers` - Add a single subscriber
+- `POST /api/admin/subscribers/import` - Import subscribers from CSV
+- `GET /api/admin/subscribers/export?publicationId=xxx` - Export subscribers to CSV
+- `GET /api/admin/lists?publicationId=xxx` - Get publication lists
+- `POST /api/admin/lists` - Create a new publication list
+- `POST /api/admin/lists/[id]/subscribers` - Add subscriber to list
+- `DELETE /api/admin/lists/[id]/subscribers?subscriberId=xxx` - Remove subscriber from list
 
 ### Webhooks
 
@@ -252,17 +265,39 @@ news/
 
 1. Go to Admin → Publications
 2. Click "Create Publication"
-3. Fill in details and save
+3. Fill in details including:
+   - Basic information (name, slug, description)
+   - Email settings (from name, from email, reply-to)
+   - **Branding** (logo URL, accent color, header image URL)
 4. You're automatically added as an admin
+
+### Customize Publication Branding
+
+1. Go to Admin → Publications → [Your Publication] → Edit Settings
+2. In the **Branding** section:
+   - **Logo URL**: Add your publication logo (displayed in emails and public pages)
+   - **Accent Color**: Choose your primary brand color using the color picker
+   - **Header Image URL**: Optional banner image for your email template
+3. Save changes - your emails will now use these branding settings
 
 ### Send Your First Newsletter
 
 1. Go to your publication in the admin
 2. Click "New Issue"
-3. Add content blocks (stories, promos, etc.)
-4. Click "Preview" to see how it looks
-5. Click "Send Test" to send to your email
-6. When ready, click "Send to Subscribers"
+3. **Optional**: Select a template to pre-populate content blocks
+4. Add content blocks (stories, promos, text, images, etc.)
+5. Click "Preview" to see how it looks
+6. Click "Send Test" to send to your email
+7. When ready, click "Send to Subscribers"
+
+### Manage Subscribers
+
+#### Add Individual Subscribers
+
+1. Go to Admin → Publications → [Your Publication] → Subscribers
+2. Click "Add Subscriber"
+3. Enter the email address
+4. Click "Add Subscriber" - they'll be automatically activated
 
 ### Import Subscribers
 
@@ -275,8 +310,48 @@ news/
 
 1. Go to Admin → Publications → [Your Publication] → Subscribers
 2. Click "Export CSV"
-3. Choose status filter (all, active, etc.)
-4. Download the CSV file
+3. Download the CSV file with all subscriber data
+
+### Create and Manage Publication Lists
+
+Publication lists allow you to segment your subscribers into groups:
+
+1. Go to Admin → Publications → [Your Publication] → Manage Lists
+2. Click "Create List"
+3. Enter a name and optional description
+4. Use the list to:
+   - Organize subscribers by interest, engagement, or topic
+   - Send targeted campaigns to specific segments (future feature)
+
+### Use Newsletter Templates
+
+Templates help you create consistent newsletters faster:
+
+1. When creating a new issue, select a template from the dropdown
+2. The issue will be pre-populated with content blocks from the template
+3. Edit the blocks as needed
+
+**Available Default Templates:**
+- **Basic Newsletter**: Simple text and story blocks
+- **Promo Newsletter**: Promotional content with call-to-action
+- **Multi-Story Newsletter**: Multiple story blocks for roundups
+
+### Customize Colors and Fonts
+
+The platform uses CSS variables for easy customization. See `src/app/customization.css` for:
+- Font size adjustments
+- Color scheme options (blue, green, purple, orange themes)
+- Typography customization
+- Spacing and layout controls
+- Component styling overrides
+
+**Quick Example:**
+```css
+:root {
+  --color-accent: #2563eb;  /* Change to blue theme */
+  --font-size-base: 18px;   /* Increase base font size */
+}
+```
 
 ## Deployment
 

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { requirePublicationAdmin } from '@/lib/auth'
 import { getPublicationById } from '@/lib/db/publications'
 import { getPublicationSubscribers } from '@/lib/db/subscribers'
+import { SubscriberManagement } from '@/components/admin/SubscriberManagement'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -54,6 +55,8 @@ export default async function PublicationSubscribersPage({ params }: PageProps) 
           Manage subscribers for {publication.name}
         </p>
       </div>
+
+      <SubscriberManagement publicationId={id} subscribers={subscribers} />
 
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--spacing-md)' }}>
