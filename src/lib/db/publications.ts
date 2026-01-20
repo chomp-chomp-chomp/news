@@ -66,6 +66,8 @@ export async function createPublication(
 ) {
   const supabase = await createAdminClient()
 
+  console.log('Creating publication:', { publication, userId })
+
   // Create publication
   const { data, error } = await supabase
     .from('publications')
@@ -73,14 +75,26 @@ export async function createPublication(
     .select()
     .single()
 
-  if (error) throw error
+  if (error) {
+    console.error('Failed to insert publication:', error)
+    throw new Error(`Failed to create publication: ${error.message}`)
+  }
+
+  console.log('Publication created, adding admin:', data.id)
 
   // Add user as admin
-  await supabase.from('publication_admins').insert({
+  const { error: adminError } = await supabase.from('publication_admins').insert({
     publication_id: data.id,
     user_id: userId,
     role: 'admin',
   })
+
+  if (adminError) {
+    console.error('Failed to add admin:', adminError)
+    throw new Error(`Failed to add admin to publication: ${adminError.message}`)
+  }
+
+  console.log('Admin added successfully')
 
   return data as Publication
 }
