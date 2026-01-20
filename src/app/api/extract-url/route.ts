@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthApi } from '@/lib/auth'
 import { z } from 'zod'
 
 const extractSchema = z.object({
@@ -9,7 +9,10 @@ const extractSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Require authentication
-    await requireAuth()
+    const user = await requireAuthApi()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
     // Parse and validate request
     const body = await request.json()

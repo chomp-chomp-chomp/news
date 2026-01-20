@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthApi } from '@/lib/auth'
 import { createLogger } from '@/lib/logger'
 import { getServerImageKit } from '@/lib/imagekit'
 
@@ -8,7 +8,10 @@ export async function POST(request: NextRequest) {
 
   try {
     // Require authentication
-    const user = await requireAuth()
+    const user = await requireAuthApi()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     logger.withContext({ userId: user.id })
 
     // Get form data
@@ -89,7 +92,10 @@ export async function DELETE(request: NextRequest) {
 
   try {
     // Require authentication
-    const user = await requireAuth()
+    const user = await requireAuthApi()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     logger.withContext({ userId: user.id })
 
     // Get file ID from query params

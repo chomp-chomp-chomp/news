@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth, isPublicationAdmin } from '@/lib/auth'
+import { requireAuthApi, isPublicationAdmin } from '@/lib/auth'
 import { updateIssue, getIssueById, deleteIssue } from '@/lib/db/issues'
 import { z } from 'zod'
 
@@ -15,7 +15,11 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthApi()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
     const { id } = await context.params
 
     // Verify issue exists and user has access
@@ -62,7 +66,11 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthApi()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
     const { id } = await context.params
 
     // Verify issue exists and user has access
