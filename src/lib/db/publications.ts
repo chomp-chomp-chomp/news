@@ -31,7 +31,7 @@ export async function getPublicationBySlug(slug: string) {
 
   const { data, error } = await supabase
     .from('publications')
-    .select('*, default_footer:default_footers(*)')
+    .select('*, default_footer:default_footers!fk_publications_default_footer(*)')
     .eq('slug', slug)
     .is('deleted_at', null)
     .single()
@@ -48,7 +48,7 @@ export async function getPublicationById(id: string) {
 
   const { data, error } = await supabase
     .from('publications')
-    .select('*, default_footer:default_footers(*)')
+    .select('*, default_footer:default_footers!fk_publications_default_footer(*)')
     .eq('id', id)
     .is('deleted_at', null)
     .single()
