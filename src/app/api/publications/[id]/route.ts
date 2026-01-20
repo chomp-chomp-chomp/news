@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth, isPublicationAdmin } from '@/lib/auth'
+import { requireAuthApi, isPublicationAdmin } from '@/lib/auth'
 import { deletePublication, getPublicationById } from '@/lib/db/publications'
 
 export async function DELETE(
@@ -7,7 +7,11 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthApi()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
     const { id } = await context.params
 
     // Verify publication exists and user has access

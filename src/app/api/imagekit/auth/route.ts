@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthApi } from '@/lib/auth'
 import ImageKit from 'imagekit'
 
 export async function GET() {
   try {
     // Require authentication
-    await requireAuth()
+    const user = await requireAuthApi()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
     // Initialize ImageKit
     const imagekit = new ImageKit({

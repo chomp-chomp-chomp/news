@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthApi, isPublicationAdmin } from '@/lib/auth'
 import { reorderBlocks, getIssueById } from '@/lib/db/issues'
 import { z } from 'zod'
 
@@ -12,7 +12,11 @@ export async function POST(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthApi()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
     const { id: issueId } = await context.params
 
     // Verify issue exists and user has access
@@ -21,7 +25,11 @@ export async function POST(
       return NextResponse.json({ error: 'Issue not found' }, { status: 404 })
     }
 
-    // TODO: Add permission check that user is admin of publication
+    // Check if user is admin of publication
+    const isAdmin = await isPublicationAdmin(issue.publication_id, user.id)
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
     // Parse and validate request
     const body = await request.json()
