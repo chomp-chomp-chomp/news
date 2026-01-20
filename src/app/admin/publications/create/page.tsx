@@ -42,7 +42,7 @@ export default async function NewPublicationPage() {
       console.log('Creating publication with:', { name, slug, fromName, fromEmail })
 
       // Build brand object
-      const brand: any = {}
+      const brand: Record<string, string> = {}
       if (logoUrl) brand.logo_url = logoUrl
       if (accentColor) brand.accent_color = accentColor
       if (headerImageUrl) brand.header_image_url = headerImageUrl

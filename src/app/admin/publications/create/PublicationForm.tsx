@@ -185,7 +185,7 @@ export default function PublicationForm({
                   name="logoUrl"
                   className="form-input"
                   placeholder="https://example.com/logo.png"
-                  defaultValue={(initialData?.brand as any)?.logo_url || ''}
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.logo_url as string || ''}
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
                   URL to your publication logo (displayed in emails and public pages)
@@ -201,14 +201,14 @@ export default function PublicationForm({
                     type="color"
                     id="accentColor"
                     name="accentColor"
-                    defaultValue={(initialData?.brand as any)?.accent_color || '#e73b42'}
+                    defaultValue={(initialData?.brand as Record<string, unknown>)?.accent_color as string || '#e73b42'}
                     style={{ width: '60px', height: '40px', cursor: 'pointer' }}
                   />
                   <input
                     type="text"
                     className="form-input"
                     placeholder="#e73b42"
-                    defaultValue={(initialData?.brand as any)?.accent_color || ''}
+                    defaultValue={(initialData?.brand as Record<string, unknown>)?.accent_color as string || ''}
                     pattern="^#[0-9A-Fa-f]{6}$"
                     title="Hex color code (e.g., #e73b42)"
                     style={{ flex: 1 }}
@@ -235,7 +235,7 @@ export default function PublicationForm({
                   name="headerImageUrl"
                   className="form-input"
                   placeholder="https://example.com/header.png"
-                  defaultValue={(initialData?.brand as any)?.header_image_url || ''}
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.header_image_url as string || ''}
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
                   Optional header image for your email template
@@ -250,7 +250,7 @@ export default function PublicationForm({
                   id="fontFamily"
                   name="fontFamily"
                   className="form-input"
-                  defaultValue={(initialData?.brand as any)?.font_family || 'system-ui'}
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.font_family as string || 'system-ui'}
                 >
                   <option value="system-ui">System (Default)</option>
                   <option value="Arial, sans-serif">Arial</option>
@@ -274,7 +274,7 @@ export default function PublicationForm({
                   id="fontSize"
                   name="fontSize"
                   className="form-input"
-                  defaultValue={(initialData?.brand as any)?.font_size || '16px'}
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.font_size as string || '16px'}
                 >
                   <option value="14px">Small (14px)</option>
                   <option value="16px">Medium (16px) - Default</option>
