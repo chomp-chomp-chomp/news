@@ -163,6 +163,12 @@ RATE_LIMIT_SEND_TEST_PER_HOUR=10
 # Email Configuration
 EMAIL_BATCH_SIZE=100
 EMAIL_BATCH_DELAY_MS=1000
+
+# Branding & Metadata (Optional)
+NEXT_PUBLIC_SITE_NAME=Newsletter Platform
+NEXT_PUBLIC_SITE_DESCRIPTION=Subscribe to quality newsletters curated by experts
+# NEXT_PUBLIC_LOGO_URL=https://your-domain.com/logo.png
+# NEXT_PUBLIC_OG_IMAGE=https://your-domain.com/og-image.png
 ```
 
 ### 7. Create Your Admin Account
@@ -279,6 +285,33 @@ news/
    - **Accent Color**: Choose your primary brand color using the color picker
    - **Header Image URL**: Optional banner image for your email template
 3. Save changes - your emails will now use these branding settings
+
+### Customize Global Site Branding
+
+You can customize the global site branding (homepage, page titles, OpenGraph tags) using environment variables:
+
+1. Edit your `.env.local` file
+2. Set the following variables:
+   ```env
+   # Site name - appears in browser tabs and page titles
+   NEXT_PUBLIC_SITE_NAME=My Newsletter Platform
+   
+   # Site description - shown on homepage and in meta tags
+   NEXT_PUBLIC_SITE_DESCRIPTION=Your custom description here
+   
+   # Optional: Logo URL for your site
+   NEXT_PUBLIC_LOGO_URL=https://your-domain.com/logo.png
+   
+   # Optional: OpenGraph image for social media sharing (1200x630px recommended)
+   NEXT_PUBLIC_OG_IMAGE=https://your-domain.com/og-image.png
+   ```
+3. Restart your development server to see the changes
+
+These settings will:
+- Update the site name in browser tabs and page titles
+- Change the homepage heading and description
+- Set OpenGraph and Twitter Card metadata for better social media sharing
+- Allow customization of your site's appearance when shared on social platforms
 
 ### Send Your First Newsletter
 
