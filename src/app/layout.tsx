@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     url: siteUrl,
     title: siteName,
     description: siteDescription,
-    siteName: siteName,
+    siteName,
     ...(ogImage && {
       images: [
         {
