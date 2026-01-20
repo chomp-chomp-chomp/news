@@ -92,9 +92,10 @@ function PromoBlock({ data }: { data: PromoBlockData }) {
       }}
     >
       <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>{data.title}</h3>
-      <p style={{ fontSize: '1.1rem', lineHeight: '1.7', marginBottom: data.link ? '1.5rem' : 0 }}>
-        {data.content}
-      </p>
+      <div 
+        style={{ fontSize: '1.1rem', lineHeight: '1.7', marginBottom: data.link ? '1.5rem' : 0 }}
+        dangerouslySetInnerHTML={{ __html: data.content }}
+      />
       {data.link && (
         <Link href={data.link} className="btn btn-primary">
           {data.link_text || 'Learn More'}
@@ -110,9 +111,10 @@ function TextBlock({ data }: { data: TextBlockData }) {
       marginBottom: '2rem',
       textAlign: data.alignment || 'left',
     }}>
-      <p style={{ fontSize: '1.1rem', lineHeight: '1.7' }}>
-        {data.content}
-      </p>
+      <div 
+        style={{ fontSize: '1.1rem', lineHeight: '1.7' }}
+        dangerouslySetInnerHTML={{ __html: data.content }}
+      />
     </section>
   )
 }

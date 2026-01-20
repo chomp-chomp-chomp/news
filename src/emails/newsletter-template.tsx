@@ -158,7 +158,7 @@ function PromoBlock({ data, accentColor }: { data: PromoBlockData; accentColor: 
       }}
     >
       <Heading style={promoTitle}>{data.title}</Heading>
-      <Text style={promoContent}>{data.content}</Text>
+      <Text style={promoContent} dangerouslySetInnerHTML={{ __html: data.content }} />
       {data.link && (
         <Link href={data.link} style={{ ...promoButton, backgroundColor: accentColor }}>
           {data.link_text || 'Learn More'}
@@ -176,9 +176,8 @@ function TextBlock({ data }: { data: TextBlockData }) {
           ...textContent,
           textAlign: data.alignment || 'left',
         }}
-      >
-        {data.content}
-      </Text>
+        dangerouslySetInnerHTML={{ __html: data.content }}
+      />
     </Section>
   )
 }
