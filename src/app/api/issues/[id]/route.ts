@@ -8,6 +8,7 @@ const updateSchema = z.object({
   preheader: z.string().nullable().optional(),
   status: z.enum(['draft', 'published', 'sent', 'scheduled']).optional(),
   slug: z.string().optional(),
+  published_at: z.string().nullable().optional(),
 })
 
 export async function PATCH(

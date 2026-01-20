@@ -106,5 +106,7 @@ export async function getUserPublications(userId?: string) {
     return []
   }
 
-  return data?.map((d: { publication: Database['public']['Tables']['publications']['Row'] | null }) => d.publication).filter(Boolean) || []
+  // Filter out deleted publications
+  return data?.map((d: { publication: Database['public']['Tables']['publications']['Row'] | null }) => d.publication)
+    .filter((pub): pub is Database['public']['Tables']['publications']['Row'] => pub !== null && pub.deleted_at === null) || []
 }

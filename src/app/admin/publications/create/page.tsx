@@ -28,6 +28,8 @@ export default async function NewPublicationPage() {
       const logoUrl = formData.get('logoUrl') as string
       const accentColor = formData.get('accentColor') as string
       const headerImageUrl = formData.get('headerImageUrl') as string
+      const fontFamily = formData.get('fontFamily') as string
+      const fontSize = formData.get('fontSize') as string
 
       // Basic validation
       if (!name || !slug || !fromName || !fromEmail) {
@@ -44,6 +46,8 @@ export default async function NewPublicationPage() {
       if (logoUrl) brand.logo_url = logoUrl
       if (accentColor) brand.accent_color = accentColor
       if (headerImageUrl) brand.header_image_url = headerImageUrl
+      if (fontFamily) brand.font_family = fontFamily
+      if (fontSize) brand.font_size = fontSize
 
       // Create publication
       const publication = await createPublication(

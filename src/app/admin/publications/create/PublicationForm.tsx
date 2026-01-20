@@ -241,6 +241,50 @@ export default function PublicationForm({
                   Optional header image for your email template
                 </p>
               </div>
+
+              <div>
+                <label htmlFor="fontFamily" className="form-label">
+                  Font Family
+                </label>
+                <select
+                  id="fontFamily"
+                  name="fontFamily"
+                  className="form-input"
+                  defaultValue={(initialData?.brand as any)?.font_family || 'system-ui'}
+                >
+                  <option value="system-ui">System (Default)</option>
+                  <option value="Arial, sans-serif">Arial</option>
+                  <option value="Helvetica, sans-serif">Helvetica</option>
+                  <option value="Georgia, serif">Georgia</option>
+                  <option value="'Times New Roman', serif">Times New Roman</option>
+                  <option value="'Courier New', monospace">Courier New</option>
+                  <option value="Verdana, sans-serif">Verdana</option>
+                  <option value="Tahoma, sans-serif">Tahoma</option>
+                </select>
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Primary font used in your newsletter emails
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="fontSize" className="form-label">
+                  Base Font Size
+                </label>
+                <select
+                  id="fontSize"
+                  name="fontSize"
+                  className="form-input"
+                  defaultValue={(initialData?.brand as any)?.font_size || '16px'}
+                >
+                  <option value="14px">Small (14px)</option>
+                  <option value="16px">Medium (16px) - Default</option>
+                  <option value="18px">Large (18px)</option>
+                  <option value="20px">Extra Large (20px)</option>
+                </select>
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Base font size for body text in your emails
+                </p>
+              </div>
             </div>
           </div>
 
