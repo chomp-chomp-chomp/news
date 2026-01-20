@@ -54,7 +54,7 @@ export default async function NewIssuePage({ params }: PageProps) {
     
     // If a template was selected, apply it by creating blocks
     if (templateId) {
-      const { createBlock } = await import('@/lib/db/blocks')
+      const { createBlock } = await import('@/lib/db/issues')
       const template = templates.find(t => t.id === templateId)
       
       if (template && template.template_data.blocks) {
@@ -63,7 +63,7 @@ export default async function NewIssuePage({ params }: PageProps) {
             issue_id: issue.id,
             type: blockData.type as any,
             data: blockData.data,
-            position: index,
+            sort_order: index,
           })
         }
       }

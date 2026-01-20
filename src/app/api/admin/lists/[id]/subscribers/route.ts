@@ -29,7 +29,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     console.error('Error adding subscriber to list:', error)
 
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid input', details: error.errors }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid input', details: error.issues }, { status: 400 })
     }
 
     if (error instanceof Error) {

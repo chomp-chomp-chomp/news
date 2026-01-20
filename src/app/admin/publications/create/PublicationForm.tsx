@@ -185,7 +185,7 @@ export default function PublicationForm({
                   name="logoUrl"
                   className="form-input"
                   placeholder="https://example.com/logo.png"
-                  defaultValue={(initialData?.brand as any)?.logo_url || ''}
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.logo_url as string || ''}
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
                   URL to your publication logo (displayed in emails and public pages)
@@ -201,14 +201,14 @@ export default function PublicationForm({
                     type="color"
                     id="accentColor"
                     name="accentColor"
-                    defaultValue={(initialData?.brand as any)?.accent_color || '#e73b42'}
+                    defaultValue={(initialData?.brand as Record<string, unknown>)?.accent_color as string || '#e73b42'}
                     style={{ width: '60px', height: '40px', cursor: 'pointer' }}
                   />
                   <input
                     type="text"
                     className="form-input"
                     placeholder="#e73b42"
-                    defaultValue={(initialData?.brand as any)?.accent_color || ''}
+                    defaultValue={(initialData?.brand as Record<string, unknown>)?.accent_color as string || ''}
                     pattern="^#[0-9A-Fa-f]{6}$"
                     title="Hex color code (e.g., #e73b42)"
                     style={{ flex: 1 }}
@@ -235,10 +235,54 @@ export default function PublicationForm({
                   name="headerImageUrl"
                   className="form-input"
                   placeholder="https://example.com/header.png"
-                  defaultValue={(initialData?.brand as any)?.header_image_url || ''}
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.header_image_url as string || ''}
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
                   Optional header image for your email template
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="fontFamily" className="form-label">
+                  Font Family
+                </label>
+                <select
+                  id="fontFamily"
+                  name="fontFamily"
+                  className="form-input"
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.font_family as string || 'system-ui'}
+                >
+                  <option value="system-ui">System (Default)</option>
+                  <option value="Arial, sans-serif">Arial</option>
+                  <option value="Helvetica, sans-serif">Helvetica</option>
+                  <option value="Georgia, serif">Georgia</option>
+                  <option value="'Times New Roman', serif">Times New Roman</option>
+                  <option value="'Courier New', monospace">Courier New</option>
+                  <option value="Verdana, sans-serif">Verdana</option>
+                  <option value="Tahoma, sans-serif">Tahoma</option>
+                </select>
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Primary font used in your newsletter emails
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="fontSize" className="form-label">
+                  Base Font Size
+                </label>
+                <select
+                  id="fontSize"
+                  name="fontSize"
+                  className="form-input"
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.font_size as string || '16px'}
+                >
+                  <option value="14px">Small (14px)</option>
+                  <option value="16px">Medium (16px) - Default</option>
+                  <option value="18px">Large (18px)</option>
+                  <option value="20px">Extra Large (20px)</option>
+                </select>
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Base font size for body text in your emails
                 </p>
               </div>
             </div>

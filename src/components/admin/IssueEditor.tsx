@@ -43,10 +43,24 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
   async function saveIssueMetadata() {
     setSaving(true)
     try {
+      interface UpdateData {
+        subject: string
+        preheader: string
+        status: 'draft' | 'published' | 'sent' | 'scheduled'
+        published_at?: string
+      }
+      
+      const updateData: UpdateData = { subject, preheader, status }
+      
+      // If changing to published status and not already published, set published_at
+      if (status === 'published' && issue.status !== 'published') {
+        updateData.published_at = new Date().toISOString()
+      }
+      
       const response = await fetch(`/api/issues/${issue.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject, preheader, status }),
+        body: JSON.stringify(updateData),
       })
 
       if (!response.ok) throw new Error('Failed to save')
@@ -285,12 +299,20 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
               value={status}
               onChange={(e) => {
                 setStatus(e.target.value as 'draft' | 'published' | 'sent' | 'scheduled')
-                saveIssueMetadata()
               }}
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
             </select>
+          </div>
+          <div style={{ paddingTop: 'var(--spacing-md)' }}>
+            <button 
+              onClick={saveIssueMetadata} 
+              className="btn btn-primary"
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
           </div>
         </div>
       </div>

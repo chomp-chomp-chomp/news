@@ -44,6 +44,8 @@ export default async function EditPublicationPage({ params }: PageProps) {
       const logoUrl = formData.get('logoUrl') as string
       const accentColor = formData.get('accentColor') as string
       const headerImageUrl = formData.get('headerImageUrl') as string
+      const fontFamily = formData.get('fontFamily') as string
+      const fontSize = formData.get('fontSize') as string
 
       // Basic validation
       if (!name || !fromName || !fromEmail) {
@@ -54,10 +56,20 @@ export default async function EditPublicationPage({ params }: PageProps) {
       }
 
       // Build brand object
-      const brand: any = {}
+      interface BrandSettings {
+        logo_url?: string
+        accent_color?: string
+        header_image_url?: string
+        font_family?: string
+        font_size?: string
+      }
+      
+      const brand: BrandSettings = {}
       if (logoUrl) brand.logo_url = logoUrl
       if (accentColor) brand.accent_color = accentColor
       if (headerImageUrl) brand.header_image_url = headerImageUrl
+      if (fontFamily) brand.font_family = fontFamily
+      if (fontSize) brand.font_size = fontSize
 
       // Don't allow changing the slug to prevent breaking existing URLs
       // Only update other fields
