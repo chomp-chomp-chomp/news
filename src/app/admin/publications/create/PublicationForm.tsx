@@ -130,7 +130,7 @@ export default function PublicationForm({
                   required
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
-                  The name that appears in the "From" field
+                  The name that appears in the &quot;From&quot; field
                 </p>
               </div>
 
