@@ -43,7 +43,14 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
   async function saveIssueMetadata() {
     setSaving(true)
     try {
-      const updateData: any = { subject, preheader, status }
+      interface UpdateData {
+        subject: string
+        preheader: string
+        status: 'draft' | 'published' | 'sent' | 'scheduled'
+        published_at?: string
+      }
+      
+      const updateData: UpdateData = { subject, preheader, status }
       
       // If changing to published status and not already published, set published_at
       if (status === 'published' && issue.status !== 'published') {

@@ -56,7 +56,15 @@ export default async function EditPublicationPage({ params }: PageProps) {
       }
 
       // Build brand object
-      const brand: Record<string, string> = {}
+      interface BrandSettings {
+        logo_url?: string
+        accent_color?: string
+        header_image_url?: string
+        font_family?: string
+        font_size?: string
+      }
+      
+      const brand: BrandSettings = {}
       if (logoUrl) brand.logo_url = logoUrl
       if (accentColor) brand.accent_color = accentColor
       if (headerImageUrl) brand.header_image_url = headerImageUrl
