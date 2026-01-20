@@ -125,7 +125,7 @@ export async function getSubscriberByUnsubscribeToken(token: string) {
 /**
  * Create subscriber (with pending status for double opt-in)
  */
-export async function createSubscriber(subscriber: SubscriberInsert) {
+export async function createSubscriber(subscriber: SubscriberInsert, status: 'pending' | 'active' = 'pending') {
   try {
     const supabase = await createAdminClient()
 
@@ -137,7 +137,9 @@ export async function createSubscriber(subscriber: SubscriberInsert) {
       .insert({
         ...subscriber,
         email: normalizedEmail,
-        status: 'pending',
+        status,
+        // If status is active, set confirmed_at timestamp
+        ...(status === 'active' ? { confirmed_at: new Date().toISOString() } : {}),
       })
       .select()
       .single()
