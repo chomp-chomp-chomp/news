@@ -96,7 +96,7 @@ export async function getIssueById(issueId: string) {
  */
 export async function createIssue(issue: IssueInsert) {
   try {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
 
     const { data, error } = await supabase
       .from('issues')
@@ -120,7 +120,7 @@ export async function createIssue(issue: IssueInsert) {
  */
 export async function updateIssue(id: string, updates: IssueUpdate) {
   try {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
 
     const { data, error } = await supabase
       .from('issues')
@@ -180,7 +180,7 @@ export async function getIssueBlocks(issueId: string) {
  * Create a block
  */
 export async function createBlock(block: BlockInsert) {
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   const { data, error } = await supabase
     .from('blocks')
@@ -196,7 +196,7 @@ export async function createBlock(block: BlockInsert) {
  * Update block
  */
 export async function updateBlock(id: string, updates: BlockUpdate) {
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   const { data, error } = await supabase
     .from('blocks')
@@ -213,7 +213,7 @@ export async function updateBlock(id: string, updates: BlockUpdate) {
  * Delete block
  */
 export async function deleteBlock(id: string) {
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   const { error } = await supabase.from('blocks').delete().eq('id', id)
 
@@ -293,7 +293,7 @@ export async function duplicateIssue(issueId: string, newSlug: string) {
  */
 export async function deleteIssue(id: string) {
   try {
-    const supabase = await createClient()
+    const supabase = await createAdminClient()
 
     const { data, error } = await supabase
       .from('issues')
@@ -308,8 +308,10 @@ export async function deleteIssue(id: string) {
     }
 
     if (!data || data.length === 0) {
-      throw new Error('Issue not found or already deleted')
+      return false
     }
+
+    return true
   } catch (error) {
     console.error('Error in deleteIssue:', error)
     throw error
