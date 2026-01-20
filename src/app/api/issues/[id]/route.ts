@@ -84,10 +84,11 @@ export async function DELETE(
     await deleteIssue(id)
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Delete issue error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
     return NextResponse.json(
-      { error: 'Failed to delete issue' },
+      { error: errorMessage },
       { status: 500 }
     )
   }

@@ -170,6 +170,12 @@ export async function deletePublication(id: string) {
   try {
     const supabase = await createClient()
 
+    // Check if publication exists
+    const existing = await getPublicationById(id)
+    if (!existing) {
+      throw new Error('Publication not found')
+    }
+
     const { error } = await supabase
       .from('publications')
       .update({ deleted_at: new Date().toISOString() })

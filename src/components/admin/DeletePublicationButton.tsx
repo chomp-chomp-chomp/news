@@ -34,9 +34,10 @@ export default function DeletePublicationButton({ publicationId, publicationName
       // Redirect to admin page
       router.push('/admin')
       router.refresh()
-    } catch (error: any) {
+    } catch (error) {
       console.error('Delete error:', error)
-      alert(`Failed to delete publication: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+      alert(`Failed to delete publication: ${errorMessage}`)
       setIsDeleting(false)
       setShowConfirm(false)
     }

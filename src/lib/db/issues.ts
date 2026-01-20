@@ -295,6 +295,12 @@ export async function deleteIssue(id: string) {
   try {
     const supabase = await createClient()
 
+    // Check if issue exists
+    const existing = await getIssueById(id)
+    if (!existing) {
+      throw new Error('Issue not found')
+    }
+
     const { error } = await supabase
       .from('issues')
       .update({ deleted_at: new Date().toISOString() })

@@ -35,9 +35,10 @@ export default function DeleteIssueButton({ issueId, publicationId, issueSubject
       // Redirect to publication page
       router.push(`/admin/publications/${publicationId}`)
       router.refresh()
-    } catch (error: any) {
+    } catch (error) {
       console.error('Delete error:', error)
-      alert(`Failed to delete issue: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+      alert(`Failed to delete issue: ${errorMessage}`)
       setIsDeleting(false)
       setShowConfirm(false)
     }
