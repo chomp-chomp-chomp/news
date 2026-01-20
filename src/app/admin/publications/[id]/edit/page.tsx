@@ -62,6 +62,7 @@ export default async function EditPublicationPage({ params }: PageProps) {
         header_image_url?: string
         font_family?: string
         font_size?: string
+        [key: string]: string | undefined
       }
       
       const brand: BrandSettings = {}

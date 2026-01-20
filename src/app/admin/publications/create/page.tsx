@@ -48,6 +48,7 @@ export default async function NewPublicationPage() {
         header_image_url?: string
         font_family?: string
         font_size?: string
+        [key: string]: string | undefined
       }
       
       const brand: BrandSettings = {}
