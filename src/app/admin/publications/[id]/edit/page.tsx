@@ -33,7 +33,6 @@ export default async function EditPublicationPage({ params }: PageProps) {
       await requirePublicationAdmin(id)
 
       const name = formData.get('name') as string
-      const slug = formData.get('slug') as string
       const description = formData.get('description') as string
       const fromName = formData.get('fromName') as string
       const fromEmail = formData.get('fromEmail') as string
@@ -41,9 +40,9 @@ export default async function EditPublicationPage({ params }: PageProps) {
       const isPublic = formData.get('isPublic') === 'on'
 
       // Basic validation
-      if (!name || !slug || !fromName || !fromEmail) {
+      if (!name || !fromName || !fromEmail) {
         return {
-          error: 'Missing required fields: name, slug, from name, and from email are required',
+          error: 'Missing required fields: name, from name, and from email are required',
           success: false
         }
       }

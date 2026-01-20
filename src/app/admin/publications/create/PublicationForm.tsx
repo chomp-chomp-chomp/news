@@ -3,17 +3,9 @@
 import { useFormState } from 'react-dom'
 import Link from 'next/link'
 import { FormState } from './types'
+import { Database } from '@/types/database'
 
-type Publication = {
-  id: string
-  name: string
-  slug: string
-  description: string | null
-  from_name: string
-  from_email: string
-  reply_to_email: string | null
-  is_public: boolean
-}
+type Publication = Database['public']['Tables']['publications']['Row']
 
 type Props = {
   action: (prevState: FormState, formData: FormData) => Promise<FormState>
