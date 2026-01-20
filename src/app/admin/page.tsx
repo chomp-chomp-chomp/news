@@ -2,6 +2,9 @@ import Link from 'next/link'
 import { requireAuth, getUserPublications } from '@/lib/auth'
 import { getPublicationStats } from '@/lib/db/publications'
 import { getPublicationIssues } from '@/lib/db/issues'
+import { Database } from '@/types/database'
+
+type Publication = Database['public']['Tables']['publications']['Row']
 
 export default async function AdminDashboard() {
   const user = await requireAuth()
@@ -9,7 +12,7 @@ export default async function AdminDashboard() {
 
   // Get stats for each publication
   const pubsWithStats = await Promise.all(
-    publications.map(async (pub: any) => {
+    publications.map(async (pub: Publication) => {
       const stats = await getPublicationStats(pub.id)
       const issues = await getPublicationIssues(pub.id)
       return { ...pub, stats, issueCount: issues.length }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { isValidEmail } from '@/lib/validation'
 
 interface SubscribeFormProps {
   publicationId: string
@@ -15,6 +16,13 @@ export default function SubscribeForm({ publicationId }: SubscribeFormProps) {
     e.preventDefault()
     setStatus('loading')
     setMessage('')
+
+    // Client-side validation
+    if (!isValidEmail(email)) {
+      setStatus('error')
+      setMessage('Please enter a valid email address')
+      return
+    }
 
     try {
       const response = await fetch('/api/subscribe', {
@@ -32,9 +40,10 @@ export default function SubscribeForm({ publicationId }: SubscribeFormProps) {
       setStatus('success')
       setMessage(data.message)
       setEmail('')
-    } catch (error: any) {
+    } catch (error) {
       setStatus('error')
-      setMessage(error.message || 'An error occurred')
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      setMessage(errorMessage)
     }
   }
 

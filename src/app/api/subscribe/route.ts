@@ -4,11 +4,19 @@ import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 import { createLogger, logSubscriberEvent } from '@/lib/logger'
 import { resend } from '@/lib/resend'
 import { reactivateSubscriber } from '@/lib/db/subscribers'
+import { EMAIL_REGEX } from '@/lib/validation'
+import { Database } from '@/types/database'
 import { z } from 'zod'
+
+type Subscriber = Database['public']['Tables']['subscribers']['Row']
+type Publication = Database['public']['Tables']['publications']['Row']
 
 const subscribeSchema = z.object({
   publicationId: z.string().uuid(),
-  email: z.string().email(),
+  email: z.string().email().min(3).max(255).refine(
+    (email) => EMAIL_REGEX.test(email),
+    { message: 'Invalid email format' }
+  ),
 })
 
 export async function POST(request: NextRequest) {
@@ -181,8 +189,8 @@ export async function POST(request: NextRequest) {
 }
 
 async function sendConfirmationEmail(
-  subscriber: any,
-  publication: any,
+  subscriber: Subscriber,
+  publication: Publication,
   baseUrl: string
 ) {
   const confirmUrl = `${baseUrl}/api/confirm?token=${subscriber.confirmation_token}`

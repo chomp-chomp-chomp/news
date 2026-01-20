@@ -7,7 +7,9 @@ export function getResend(): Resend {
   if (!resendInstance) {
     const apiKey = process.env.RESEND_API_KEY
     if (!apiKey) {
-      throw new Error('RESEND_API_KEY environment variable is not set')
+      throw new Error(
+        'RESEND_API_KEY environment variable is not set. Please add it to your environment variables to enable email functionality.'
+      )
     }
     resendInstance = new Resend(apiKey)
   }

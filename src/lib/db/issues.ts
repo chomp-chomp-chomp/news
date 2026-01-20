@@ -15,19 +15,27 @@ export async function getPublicationIssues(
   publicationId: string,
   includeBlocks = false
 ) {
-  const supabase = await createClient()
+  try {
+    const supabase = await createClient()
 
-  let query = supabase
-    .from('issues')
-    .select(includeBlocks ? '*, blocks(*)' : '*')
-    .eq('publication_id', publicationId)
-    .is('deleted_at', null)
-    .order('created_at', { ascending: false })
+    let query = supabase
+      .from('issues')
+      .select(includeBlocks ? '*, blocks(*)' : '*')
+      .eq('publication_id', publicationId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
 
-  const { data, error } = await query
+    const { data, error } = await query
 
-  if (error) throw error
-  return data as Issue[]
+    if (error) {
+      console.error('Error fetching publication issues:', error)
+      throw new Error(`Failed to fetch issues: ${error.message}`)
+    }
+    return data as Issue[]
+  } catch (error) {
+    console.error('Error in getPublicationIssues:', error)
+    throw error
+  }
 }
 
 /**
@@ -63,7 +71,7 @@ export async function getIssueBySlug(publicationId: string, slug: string) {
     .single()
 
   if (error && error.code !== 'PGRST116') throw error
-  return data as (Issue & { publication: any; blocks: any[] }) | null
+  return data as (Issue & { publication: Database['public']['Tables']['publications']['Row']; blocks: Block[] }) | null
 }
 
 /**
@@ -80,40 +88,56 @@ export async function getIssueById(issueId: string) {
     .single()
 
   if (error && error.code !== 'PGRST116') throw error
-  return data as (Issue & { publication: any; blocks: any[] }) | null
+  return data as (Issue & { publication: Database['public']['Tables']['publications']['Row']; blocks: Block[] }) | null
 }
 
 /**
  * Create a new issue
  */
 export async function createIssue(issue: IssueInsert) {
-  const supabase = await createClient()
+  try {
+    const supabase = await createClient()
 
-  const { data, error } = await supabase
-    .from('issues')
-    .insert(issue)
-    .select()
-    .single()
+    const { data, error } = await supabase
+      .from('issues')
+      .insert(issue)
+      .select()
+      .single()
 
-  if (error) throw error
-  return data as Issue
+    if (error) {
+      console.error('Error creating issue:', error)
+      throw new Error(`Failed to create issue: ${error.message}`)
+    }
+    return data as Issue
+  } catch (error) {
+    console.error('Error in createIssue:', error)
+    throw error
+  }
 }
 
 /**
  * Update issue
  */
 export async function updateIssue(id: string, updates: IssueUpdate) {
-  const supabase = await createClient()
+  try {
+    const supabase = await createClient()
 
-  const { data, error } = await supabase
-    .from('issues')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single()
+    const { data, error } = await supabase
+      .from('issues')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
 
-  if (error) throw error
-  return data as Issue
+    if (error) {
+      console.error('Error updating issue:', error)
+      throw new Error(`Failed to update issue: ${error.message}`)
+    }
+    return data as Issue
+  } catch (error) {
+    console.error('Error in updateIssue:', error)
+    throw error
+  }
 }
 
 /**

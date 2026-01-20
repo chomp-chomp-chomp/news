@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { Database } from '@/types/database'
 
 /**
  * Get current user or redirect to login
@@ -85,5 +86,5 @@ export async function getUserPublications(userId?: string) {
     return []
   }
 
-  return data?.map((d: any) => d.publication).filter(Boolean) || []
+  return data?.map((d: { publication: Database['public']['Tables']['publications']['Row'] | null }) => d.publication).filter(Boolean) || []
 }

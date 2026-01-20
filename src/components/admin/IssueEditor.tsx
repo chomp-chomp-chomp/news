@@ -5,15 +5,18 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import ImageUpload from './ImageUpload'
 import RichTextEditor from './RichTextEditor'
+import { Database } from '@/types/database'
+import { Json } from '@/types/database'
+import { jsonToRecord, getStringFromJson } from '@/lib/json-utils'
 
-type Publication = any
-type Issue = any
+type Publication = Database['public']['Tables']['publications']['Row']
+type Issue = Database['public']['Tables']['issues']['Row']
 type Block = {
   id: string
   issue_id: string
   type: 'story' | 'promo' | 'text' | 'divider' | 'image' | 'footer'
   sort_order: number
-  data: any
+  data: Json
   created_at: string
   updated_at: string
 }
@@ -77,7 +80,7 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
     }
   }
 
-  async function updateBlock(blockId: string, data: any) {
+  async function updateBlock(blockId: string, data: Json) {
     try {
       const response = await fetch(`/api/blocks/${blockId}`, {
         method: 'PATCH',
@@ -280,7 +283,7 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
               className="form-input"
               value={status}
               onChange={(e) => {
-                setStatus(e.target.value)
+                setStatus(e.target.value as 'draft' | 'published' | 'sent' | 'scheduled')
                 saveIssueMetadata()
               }}
             >
@@ -388,19 +391,25 @@ interface BlockEditorProps {
   block: Block
   isFirst: boolean
   isLast: boolean
-  onUpdate: (data: any) => void
+  onUpdate: (data: Json) => void
   onDelete: () => void
   onMoveUp: () => void
   onMoveDown: () => void
 }
 
 function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onMoveDown }: BlockEditorProps) {
-  const [data, setData] = useState(block.data)
+  const [data, setData] = useState<Json>(block.data)
   const [expanded, setExpanded] = useState(true)
 
-  function handleChange(field: string, value: any) {
-    const newData = { ...data, [field]: value }
-    setData(newData)
+  // Use utility function to safely convert Json to object
+  const dataAsObject = jsonToRecord(data)
+  
+  // Helper to safely get string values
+  const getString = (key: string): string => getStringFromJson(data, key)
+
+  function handleChange(field: string, value: string | boolean | number | null) {
+    const newData = { ...dataAsObject, [field]: value }
+    setData(newData as Json)
   }
 
   function handleBlur() {
@@ -482,7 +491,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="text"
                   className="form-input"
-                  value={data.title || ''}
+                  value={getString('title') || ''}
                   onChange={(e) => handleChange('title', e.target.value)}
                   onBlur={handleBlur}
                 />
@@ -491,7 +500,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <label className="form-label">Description/Blurb</label>
                 <textarea
                   className="form-input"
-                  value={data.blurb || ''}
+                  value={getString('blurb') || ''}
                   onChange={(e) => handleChange('blurb', e.target.value)}
                   onBlur={handleBlur}
                   rows={3}
@@ -502,14 +511,14 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="url"
                   className="form-input"
-                  value={data.link || ''}
+                  value={getString('link') || ''}
                   onChange={(e) => handleChange('link', e.target.value)}
                   onBlur={handleBlur}
                 />
               </div>
               <ImageUpload
                 label="Story Image"
-                currentImage={data.image_url || ''}
+                currentImage={getString('image_url') || ''}
                 onUpload={(url) => {
                   handleChange('image_url', url)
                   handleBlur()
@@ -520,7 +529,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="text"
                   className="form-input"
-                  value={data.image_alt || ''}
+                  value={getString('image_alt') || ''}
                   onChange={(e) => handleChange('image_alt', e.target.value)}
                   onBlur={handleBlur}
                 />
@@ -535,7 +544,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="text"
                   className="form-input"
-                  value={data.title || ''}
+                  value={getString('title') || ''}
                   onChange={(e) => handleChange('title', e.target.value)}
                   onBlur={handleBlur}
                 />
@@ -543,7 +552,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
               <div>
                 <label className="form-label">Content</label>
                 <RichTextEditor
-                  content={data.content || ''}
+                  content={getString('content') || ''}
                   onChange={(html) => {
                     handleChange('content', html)
                     handleBlur()
@@ -556,7 +565,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="url"
                   className="form-input"
-                  value={data.link || ''}
+                  value={getString('link') || ''}
                   onChange={(e) => handleChange('link', e.target.value)}
                   onBlur={handleBlur}
                 />
@@ -566,7 +575,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="text"
                   className="form-input"
-                  value={data.link_text || ''}
+                  value={getString('link_text') || ''}
                   onChange={(e) => handleChange('link_text', e.target.value)}
                   onBlur={handleBlur}
                 />
@@ -576,7 +585,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="color"
                   className="form-input"
-                  value={data.background_color || '#f5f5f5'}
+                  value={getString('background_color') || '#f5f5f5'}
                   onChange={(e) => handleChange('background_color', e.target.value)}
                   onBlur={handleBlur}
                 />
@@ -589,7 +598,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
               <div>
                 <label className="form-label">Content</label>
                 <RichTextEditor
-                  content={data.content || ''}
+                  content={getString('content') || ''}
                   onChange={(html) => {
                     handleChange('content', html)
                     handleBlur()
@@ -601,7 +610,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <label className="form-label">Alignment</label>
                 <select
                   className="form-input"
-                  value={data.alignment || 'left'}
+                  value={getString('alignment') || 'left'}
                   onChange={(e) => {
                     handleChange('alignment', e.target.value)
                     handleBlur()
@@ -619,7 +628,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
             <>
               <ImageUpload
                 label="Image"
-                currentImage={data.url || ''}
+                currentImage={getString('url') || ''}
                 onUpload={(url) => {
                   handleChange('url', url)
                   handleBlur()
@@ -630,7 +639,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="text"
                   className="form-input"
-                  value={data.alt || ''}
+                  value={getString('alt') || ''}
                   onChange={(e) => handleChange('alt', e.target.value)}
                   onBlur={handleBlur}
                 />
@@ -640,7 +649,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="text"
                   className="form-input"
-                  value={data.caption || ''}
+                  value={getString('caption') || ''}
                   onChange={(e) => handleChange('caption', e.target.value)}
                   onBlur={handleBlur}
                 />
@@ -650,7 +659,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                 <input
                   type="url"
                   className="form-input"
-                  value={data.link || ''}
+                  value={getString('link') || ''}
                   onChange={(e) => handleChange('link', e.target.value)}
                   onBlur={handleBlur}
                 />
@@ -663,7 +672,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
               <label className="form-label">Style</label>
               <select
                 className="form-input"
-                value={data.style || 'solid'}
+                value={getString('style') || 'solid'}
                 onChange={(e) => {
                   handleChange('style', e.target.value)
                   handleBlur()
@@ -680,7 +689,7 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
             <div>
               <label className="form-label">Footer Content</label>
               <RichTextEditor
-                content={data.content || ''}
+                content={getString('content') || ''}
                 onChange={(html) => {
                   handleChange('content', html)
                   handleBlur()

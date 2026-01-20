@@ -16,42 +16,58 @@ export async function getPublicationSubscribers(
     search?: string
   }
 ) {
-  const supabase = await createClient()
+  try {
+    const supabase = await createClient()
 
-  let query = supabase
-    .from('subscribers')
-    .select('*')
-    .eq('publication_id', publicationId)
+    let query = supabase
+      .from('subscribers')
+      .select('*')
+      .eq('publication_id', publicationId)
 
-  if (filters?.status) {
-    query = query.eq('status', filters.status)
+    if (filters?.status) {
+      query = query.eq('status', filters.status)
+    }
+
+    if (filters?.search) {
+      query = query.ilike('email', `%${filters.search}%`)
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching publication subscribers:', error)
+      throw new Error(`Failed to fetch subscribers: ${error.message}`)
+    }
+    return data as Subscriber[]
+  } catch (error) {
+    console.error('Error in getPublicationSubscribers:', error)
+    throw error
   }
-
-  if (filters?.search) {
-    query = query.ilike('email', `%${filters.search}%`)
-  }
-
-  const { data, error } = await query.order('created_at', { ascending: false })
-
-  if (error) throw error
-  return data as Subscriber[]
 }
 
 /**
  * Get active subscribers for sending
  */
 export async function getActiveSubscribers(publicationId: string) {
-  const supabase = await createAdminClient()
+  try {
+    const supabase = await createAdminClient()
 
-  const { data, error } = await supabase
-    .from('subscribers')
-    .select('*')
-    .eq('publication_id', publicationId)
-    .eq('status', 'active')
-    .order('email')
+    const { data, error } = await supabase
+      .from('subscribers')
+      .select('*')
+      .eq('publication_id', publicationId)
+      .eq('status', 'active')
+      .order('email')
 
-  if (error) throw error
-  return data as Subscriber[]
+    if (error) {
+      console.error('Error fetching active subscribers:', error)
+      throw new Error(`Failed to fetch active subscribers: ${error.message}`)
+    }
+    return data as Subscriber[]
+  } catch (error) {
+    console.error('Error in getActiveSubscribers:', error)
+    throw error
+  }
 }
 
 /**
@@ -87,7 +103,7 @@ export async function getSubscriberByConfirmationToken(token: string) {
     .single()
 
   if (error && error.code !== 'PGRST116') throw error
-  return data as (Subscriber & { publication: any }) | null
+  return data as (Subscriber & { publication: Database['public']['Tables']['publications']['Row'] }) | null
 }
 
 /**
@@ -103,30 +119,38 @@ export async function getSubscriberByUnsubscribeToken(token: string) {
     .single()
 
   if (error && error.code !== 'PGRST116') throw error
-  return data as (Subscriber & { publication: any }) | null
+  return data as (Subscriber & { publication: Database['public']['Tables']['publications']['Row'] }) | null
 }
 
 /**
  * Create subscriber (with pending status for double opt-in)
  */
 export async function createSubscriber(subscriber: SubscriberInsert) {
-  const supabase = await createAdminClient()
+  try {
+    const supabase = await createAdminClient()
 
-  // Normalize email
-  const normalizedEmail = subscriber.email.toLowerCase().trim()
+    // Normalize email
+    const normalizedEmail = subscriber.email.toLowerCase().trim()
 
-  const { data, error } = await supabase
-    .from('subscribers')
-    .insert({
-      ...subscriber,
-      email: normalizedEmail,
-      status: 'pending',
-    })
-    .select()
-    .single()
+    const { data, error } = await supabase
+      .from('subscribers')
+      .insert({
+        ...subscriber,
+        email: normalizedEmail,
+        status: 'pending',
+      })
+      .select()
+      .single()
 
-  if (error) throw error
-  return data as Subscriber
+    if (error) {
+      console.error('Error creating subscriber:', error)
+      throw new Error(`Failed to create subscriber: ${error.message}`)
+    }
+    return data as Subscriber
+  } catch (error) {
+    console.error('Error in createSubscriber:', error)
+    throw error
+  }
 }
 
 /**
