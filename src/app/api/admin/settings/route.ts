@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     // Convert array to key-value object
     const rows = (data ?? []) as SiteSettingRow[]
-    const settings = rows.reduce((acc, setting) => {
+    const settings = rows.reduce((acc: Record<string, string>, setting) => {
       acc[setting.key] = setting.value ?? ''
       return acc
     }, {} as Record<string, string>)
