@@ -29,6 +29,7 @@ interface NewsletterEmailProps {
 
 export default function NewsletterEmail({ renderModel }: NewsletterEmailProps) {
   const { publication, issue, blocks, footer, urls } = renderModel
+  const accentColor = publication.brand.accent_color || '#e73b42'
 
   return (
     <Html>
@@ -38,6 +39,13 @@ export default function NewsletterEmail({ renderModel }: NewsletterEmailProps) {
         <Container style={container}>
           {/* Header with branding */}
           <Section style={header}>
+            {publication.brand.header_image_url && (
+              <Img
+                src={publication.brand.header_image_url}
+                alt={`${publication.name} header`}
+                style={headerImage}
+              />
+            )}
             {publication.brand.logo_url && (
               <Img
                 src={publication.brand.logo_url}
@@ -55,7 +63,7 @@ export default function NewsletterEmail({ renderModel }: NewsletterEmailProps) {
 
           {/* Render blocks */}
           {blocks.map((block) => (
-            <BlockRenderer key={block.id} block={block} />
+            <BlockRenderer key={block.id} block={block} accentColor={accentColor} />
           ))}
 
           {/* Footer */}
@@ -70,7 +78,7 @@ export default function NewsletterEmail({ renderModel }: NewsletterEmailProps) {
                     <Link
                       key={idx}
                       href={social.url}
-                      style={socialLink}
+                      style={{ ...socialLink, color: accentColor }}
                     >
                       {social.label || social.platform}
                     </Link>
@@ -83,11 +91,11 @@ export default function NewsletterEmail({ renderModel }: NewsletterEmailProps) {
               )}
 
               <Text style={footerLinks}>
-                <Link href={urls.webVersion} style={link}>
+                <Link href={urls.webVersion} style={{ ...link, color: accentColor }}>
                   View in browser
                 </Link>
                 {' · '}
-                <Link href={urls.unsubscribe} style={link}>
+                <Link href={urls.unsubscribe} style={{ ...link, color: accentColor }}>
                   Unsubscribe
                 </Link>
               </Text>
@@ -99,12 +107,12 @@ export default function NewsletterEmail({ renderModel }: NewsletterEmailProps) {
   )
 }
 
-function BlockRenderer({ block }: { block: RenderBlock }) {
+function BlockRenderer({ block, accentColor }: { block: RenderBlock; accentColor: string }) {
   switch (block.type) {
     case 'story':
-      return <StoryBlock data={block.data as StoryBlockData} />
+      return <StoryBlock data={block.data as StoryBlockData} accentColor={accentColor} />
     case 'promo':
-      return <PromoBlock data={block.data as PromoBlockData} />
+      return <PromoBlock data={block.data as PromoBlockData} accentColor={accentColor} />
     case 'text':
       return <TextBlock data={block.data as TextBlockData} />
     case 'divider':
@@ -116,7 +124,7 @@ function BlockRenderer({ block }: { block: RenderBlock }) {
   }
 }
 
-function StoryBlock({ data }: { data: StoryBlockData }) {
+function StoryBlock({ data, accentColor }: { data: StoryBlockData; accentColor: string }) {
   return (
     <Section style={storySection}>
       {data.image_url && (
@@ -134,14 +142,14 @@ function StoryBlock({ data }: { data: StoryBlockData }) {
         </Link>
       </Heading>
       <Text style={storyBlurb}>{data.blurb}</Text>
-      <Link href={data.link} style={readMore}>
+      <Link href={data.link} style={{ ...readMore, color: accentColor }}>
         Read more →
       </Link>
     </Section>
   )
 }
 
-function PromoBlock({ data }: { data: PromoBlockData }) {
+function PromoBlock({ data, accentColor }: { data: PromoBlockData; accentColor: string }) {
   return (
     <Section
       style={{
@@ -152,7 +160,7 @@ function PromoBlock({ data }: { data: PromoBlockData }) {
       <Heading style={promoTitle}>{data.title}</Heading>
       <Text style={promoContent}>{data.content}</Text>
       {data.link && (
-        <Link href={data.link} style={promoButton}>
+        <Link href={data.link} style={{ ...promoButton, backgroundColor: accentColor }}>
           {data.link_text || 'Learn More'}
         </Link>
       )}
@@ -223,6 +231,13 @@ const header = {
 const logo = {
   maxWidth: '150px',
   margin: '0 auto 16px',
+}
+
+const headerImage = {
+  width: '100%',
+  maxWidth: '600px',
+  height: 'auto',
+  marginBottom: '20px',
 }
 
 const title = {

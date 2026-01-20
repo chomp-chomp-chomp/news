@@ -23,6 +23,11 @@ export default async function NewPublicationPage() {
       const fromEmail = formData.get('fromEmail') as string
       const replyToEmail = formData.get('replyToEmail') as string
       const isPublic = formData.get('isPublic') === 'on'
+      
+      // Branding fields
+      const logoUrl = formData.get('logoUrl') as string
+      const accentColor = formData.get('accentColor') as string
+      const headerImageUrl = formData.get('headerImageUrl') as string
 
       // Basic validation
       if (!name || !slug || !fromName || !fromEmail) {
@@ -34,6 +39,12 @@ export default async function NewPublicationPage() {
 
       console.log('Creating publication with:', { name, slug, fromName, fromEmail })
 
+      // Build brand object
+      const brand: any = {}
+      if (logoUrl) brand.logo_url = logoUrl
+      if (accentColor) brand.accent_color = accentColor
+      if (headerImageUrl) brand.header_image_url = headerImageUrl
+
       // Create publication
       const publication = await createPublication(
         {
@@ -44,6 +55,7 @@ export default async function NewPublicationPage() {
           from_email: fromEmail,
           reply_to_email: replyToEmail || null,
           is_public: isPublic,
+          brand: Object.keys(brand).length > 0 ? brand : {},
         },
         user.id
       )
