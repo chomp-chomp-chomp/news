@@ -3,14 +3,27 @@
 import { useFormState } from 'react-dom'
 import Link from 'next/link'
 import { FormState } from './types'
+import { Database } from '@/types/database'
+
+type Publication = Database['public']['Tables']['publications']['Row']
 
 type Props = {
   action: (prevState: FormState, formData: FormData) => Promise<FormState>
+  initialData?: Publication
+  cancelHref?: string
+  submitLabel?: string
+  disableSlugEdit?: boolean
 }
 
 const initialState: FormState = {}
 
-export default function PublicationForm({ action }: Props) {
+export default function PublicationForm({ 
+  action, 
+  initialData, 
+  cancelHref = '/admin/publications',
+  submitLabel = 'Create Publication',
+  disableSlugEdit = false
+}: Props) {
   const [state, formAction] = useFormState(action, initialState)
 
   return (
@@ -42,6 +55,7 @@ export default function PublicationForm({ action }: Props) {
               name="name"
               className="form-input"
               placeholder="My Newsletter"
+              defaultValue={initialData?.name}
               required
             />
             <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
@@ -61,14 +75,16 @@ export default function PublicationForm({ action }: Props) {
                 name="slug"
                 className="form-input"
                 placeholder="my-newsletter"
+                defaultValue={initialData?.slug}
                 pattern="[a-z0-9\-]+"
                 title="Lowercase letters, numbers, and hyphens only"
                 required
-                style={{ flex: 1 }}
+                disabled={disableSlugEdit}
+                style={{ flex: 1, ...(disableSlugEdit ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}
               />
             </div>
             <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
-              Lowercase letters, numbers, and hyphens only
+              {disableSlugEdit ? 'URL slug cannot be changed after creation' : 'Lowercase letters, numbers, and hyphens only'}
             </p>
           </div>
 
@@ -81,6 +97,7 @@ export default function PublicationForm({ action }: Props) {
               name="description"
               className="form-input"
               placeholder="A brief description of your newsletter"
+              defaultValue={initialData?.description || ''}
               rows={3}
             />
           </div>
@@ -104,10 +121,11 @@ export default function PublicationForm({ action }: Props) {
                   name="fromName"
                   className="form-input"
                   placeholder="John Doe"
+                  defaultValue={initialData?.from_name}
                   required
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
-                  The name that appears in the "From" field
+                  The name that appears in the &quot;From&quot; field
                 </p>
               </div>
 
@@ -121,6 +139,7 @@ export default function PublicationForm({ action }: Props) {
                   name="fromEmail"
                   className="form-input"
                   placeholder="newsletter@example.com"
+                  defaultValue={initialData?.from_email}
                   required
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
@@ -138,6 +157,7 @@ export default function PublicationForm({ action }: Props) {
                   name="replyToEmail"
                   className="form-input"
                   placeholder="replies@example.com"
+                  defaultValue={initialData?.reply_to_email || ''}
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
                   Where replies are sent (defaults to From Email)
@@ -158,7 +178,7 @@ export default function PublicationForm({ action }: Props) {
               <input
                 type="checkbox"
                 name="isPublic"
-                defaultChecked
+                defaultChecked={initialData?.is_public ?? true}
                 style={{ width: '1.25rem', height: '1.25rem' }}
               />
               <div>
@@ -177,9 +197,9 @@ export default function PublicationForm({ action }: Props) {
             borderTop: '1px solid var(--color-border)',
           }}>
             <button type="submit" className="btn btn-primary">
-              Create Publication
+              {submitLabel}
             </button>
-            <Link href="/admin/publications" className="btn btn-secondary">
+            <Link href={cancelHref} className="btn btn-secondary">
               Cancel
             </Link>
           </div>

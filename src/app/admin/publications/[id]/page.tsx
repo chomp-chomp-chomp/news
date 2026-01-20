@@ -72,6 +72,9 @@ export default async function PublicationManagePage({ params }: PageProps) {
         <Link href={`/admin/publications/${id}/issues/create`} className="btn btn-primary">
           New Issue
         </Link>
+        <Link href={`/admin/publications/${id}/edit`} className="btn btn-secondary">
+          Edit Settings
+        </Link>
         <Link href={`/admin/publications/${id}/subscribers`} className="btn btn-secondary">
           Manage Subscribers
         </Link>
