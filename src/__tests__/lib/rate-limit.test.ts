@@ -1,28 +1,25 @@
 import { getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 
 // Mock the supabase client
-jest.mock('@/lib/supabase/server', () => ({
-  createAdminClient: jest.fn(() => Promise.resolve({
+// This mock simulates the Supabase query builder chain pattern
+jest.mock('@/lib/supabase/server', () => {
+  const mockClient = {
     from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            gte: jest.fn(() => ({
-              single: jest.fn(() => Promise.resolve({ data: null, error: { code: 'PGRST116' } }))
-            }))
-          }))
-        }))
-      })),
-      insert: jest.fn(() => Promise.resolve({ error: null })),
-      update: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({ error: null }))
-      })),
-      delete: jest.fn(() => ({
-        lt: jest.fn(() => Promise.resolve({ error: null }))
-      }))
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      gte: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: { code: 'PGRST116' } }),
+      insert: jest.fn().mockResolvedValue({ error: null }),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      lt: jest.fn().mockResolvedValue({ error: null }),
     }))
-  }))
-}))
+  }
+  
+  return {
+    createAdminClient: jest.fn().mockResolvedValue(mockClient)
+  }
+})
 
 describe('Rate Limiting', () => {
   describe('getClientIp', () => {
