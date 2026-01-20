@@ -41,12 +41,17 @@ export async function isPublicationAdmin(
 
   if (!user) return false
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('publication_admins')
     .select('id')
     .eq('publication_id', publicationId)
     .eq('user_id', user)
-    .single()
+    .maybeSingle()
+
+  if (error) {
+    console.error('Error checking admin status:', error)
+    return false
+  }
 
   return !!data
 }
