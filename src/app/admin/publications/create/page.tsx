@@ -1,13 +1,8 @@
 import { redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth'
 import { createPublication } from '@/lib/db/publications'
-import Link from 'next/link'
 import PublicationForm from './PublicationForm'
-
-type FormState = {
-  error?: string
-  success?: boolean
-}
+import { FormState } from './types'
 
 export default async function NewPublicationPage() {
   await requireAuth()
@@ -55,8 +50,15 @@ export default async function NewPublicationPage() {
 
       console.log('Publication created:', publication.id)
 
+      // Redirect on success - redirect() throws a special error that Next.js handles
       redirect(`/admin/publications/${publication.id}`)
     } catch (error) {
+      // Re-throw redirect errors so Next.js can handle them
+      if (error && typeof error === 'object' && 'digest' in error && 
+          String(error.digest).startsWith('NEXT_REDIRECT')) {
+        throw error
+      }
+      
       console.error('Failed to create publication:', error)
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
       return {

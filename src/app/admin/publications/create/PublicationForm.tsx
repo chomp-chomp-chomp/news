@@ -2,11 +2,7 @@
 
 import { useFormState } from 'react-dom'
 import Link from 'next/link'
-
-type FormState = {
-  error?: string
-  success?: boolean
-}
+import { FormState } from './types'
 
 type Props = {
   action: (prevState: FormState, formData: FormData) => Promise<FormState>
