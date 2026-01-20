@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import ImageUpload from './ImageUpload'
 import RichTextEditor from './RichTextEditor'
+import DeleteIssueButton from './DeleteIssueButton'
 import { Database } from '@/types/database'
 import { Json } from '@/types/database'
 import { jsonToRecord, getStringFromJson } from '@/lib/json-utils'
@@ -244,7 +245,7 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
           <button onClick={sendTestEmail} className="btn btn-secondary">
             Send Test
           </button>
-          <Link href={`/n/${publication.slug}/${issue.slug}`} className="btn btn-secondary">
+          <Link href={`/admin/publications/${publication.id}/issues/${issue.id}/preview`} className="btn btn-secondary">
             Preview
           </Link>
         </div>
@@ -368,6 +369,21 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
             ))}
           </div>
         )}
+      </div>
+
+      {/* Danger Zone */}
+      <div className="card" style={{ marginBottom: '2rem', borderColor: 'var(--color-danger)', borderWidth: '2px' }}>
+        <h2 style={{ fontSize: '1.5rem', marginBottom: 'var(--spacing-md)', color: 'var(--color-danger-text)' }}>
+          Danger Zone
+        </h2>
+        <p className="text-muted" style={{ marginBottom: 'var(--spacing-md)' }}>
+          Deleting this issue is permanent and cannot be undone. All content blocks will also be deleted.
+        </p>
+        <DeleteIssueButton
+          issueId={issue.id}
+          publicationId={publication.id}
+          issueSubject={subject}
+        />
       </div>
 
       {saving && (
