@@ -14,18 +14,9 @@ export default async function AdminLayout({
       <MobileSidebar userEmail={user.email || ''} publications={publications} />
 
       {/* Main Content */}
-      <main className="admin-main-content" style={{ flex: 1, padding: 'var(--spacing-xl)', maxWidth: '1200px' }}>
+      <main style={{ flex: 1, padding: 'var(--spacing-xl)', maxWidth: '1200px' }}>
         {children}
       </main>
-
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .admin-main-content {
-            margin-left: 0;
-            padding-top: 4rem !important;
-          }
-        }
-      `}</style>
     </div>
   )
 }

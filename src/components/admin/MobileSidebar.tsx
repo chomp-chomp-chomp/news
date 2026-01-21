@@ -164,7 +164,7 @@ export default function MobileSidebar({ userEmail, publications }: MobileSidebar
         </div>
       </aside>
 
-      <style jsx>{`
+      <style jsx global>{`
         @media (max-width: 768px) {
           .mobile-menu-button {
             display: block !important;
@@ -186,6 +186,12 @@ export default function MobileSidebar({ userEmail, publications }: MobileSidebar
 
           .admin-sidebar.mobile-open {
             transform: translateX(0);
+          }
+
+          /* Add padding-top to main content on mobile to account for hamburger button */
+          .admin-sidebar ~ main {
+            margin-left: 0;
+            padding-top: 4rem !important;
           }
         }
       `}</style>
