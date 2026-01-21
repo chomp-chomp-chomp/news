@@ -38,6 +38,7 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
 
   const [showAddBlock, setShowAddBlock] = useState(false)
   const [extractUrl, setExtractUrl] = useState('')
+  const [extractPublicationName, setExtractPublicationName] = useState('')
   const [extracting, setExtracting] = useState(false)
 
   async function saveIssueMetadata() {
@@ -163,7 +164,10 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
       const response = await fetch('/api/extract-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: extractUrl }),
+        body: JSON.stringify({
+          url: extractUrl,
+          publicationName: extractPublicationName || undefined,
+        }),
       })
 
       if (!response.ok) {
@@ -205,6 +209,7 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
       const newBlock = await storyResponse.json()
       setBlocks([...blocks, newBlock])
       setExtractUrl('')
+      setExtractPublicationName('')
       setShowAddBlock(false)
     } catch (error: any) {
       alert(`Failed to extract URL: ${error.message}`)
@@ -406,7 +411,7 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
             <h3 style={{ fontSize: '1.1rem', marginBottom: 'var(--spacing-md)' }}>
               Add from URL
             </h3>
-            <div style={{ display: 'flex', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-md)' }}>
+            <div style={{ display: 'flex', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-sm)' }}>
               <input
                 type="url"
                 className="form-input"
@@ -422,6 +427,18 @@ export default function IssueEditor({ publication, issue, blocks: initialBlocks 
               >
                 {extracting ? 'Extracting...' : 'Extract'}
               </button>
+            </div>
+            <div style={{ marginBottom: 'var(--spacing-md)' }}>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="Publication name (optional)"
+                value={extractPublicationName}
+                onChange={(e) => setExtractPublicationName(e.target.value)}
+              />
+              <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                Optional: Manually specify publication name if not auto-detected
+              </p>
             </div>
 
             <h3 style={{ fontSize: '1.1rem', marginBottom: 'var(--spacing-md)' }}>

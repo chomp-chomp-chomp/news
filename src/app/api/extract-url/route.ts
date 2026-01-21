@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 const extractSchema = z.object({
   url: z.string().url(),
+  publicationName: z.string().optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -16,9 +17,12 @@ export async function POST(request: NextRequest) {
 
     // Parse and validate request
     const body = await request.json()
-    const { url } = extractSchema.parse(body)
+    const { url, publicationName } = extractSchema.parse(body)
 
     console.log('Extracting metadata from URL:', url)
+    if (publicationName) {
+      console.log('Using provided publication name:', publicationName)
+    }
 
     // Fetch the page with timeout
     const controller = new AbortController()
@@ -56,7 +60,7 @@ export async function POST(request: NextRequest) {
         extractMeta(html, 'twitter:image') ||
         extractFirstImage(html) ||
         '',
-      siteName: extractMeta(html, 'og:site_name') || '',
+      siteName: publicationName || extractMeta(html, 'og:site_name') || '',
       url: extractMeta(html, 'og:url') || url,
     }
 
