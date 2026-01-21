@@ -4,6 +4,7 @@ import { getPublicationBySlug, getPublicationStats } from '@/lib/db/publications
 import { getPublishedIssues } from '@/lib/db/issues'
 import SubscribeForm from '@/components/SubscribeForm'
 import { format } from 'date-fns'
+import { isPublicationAdmin } from '@/lib/auth'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -23,8 +24,24 @@ export default async function PublicationPage({ params, searchParams }: PageProp
   const issues = await getPublishedIssues(publication.id)
   const stats = await getPublicationStats(publication.id)
 
+  // Check if current user is admin of this publication
+  const canEdit = await isPublicationAdmin(publication.id)
+
   return (
-    <main className="container" style={{ paddingTop: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)' }}>
+    <main className="container" style={{ paddingTop: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)', position: 'relative' }}>
+      {/* Admin Edit Button */}
+      {canEdit && (
+        <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+          <Link
+            href={`/admin/publications/${publication.id}/edit`}
+            className="btn btn-secondary"
+            style={{ fontSize: '0.9rem' }}
+          >
+            ✏️ Edit Publication
+          </Link>
+        </div>
+      )}
+
       {/* Header */}
       <section style={{ textAlign: 'center', marginBottom: '4rem' }}>
         <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>{publication.name}</h1>

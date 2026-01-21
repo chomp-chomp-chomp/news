@@ -430,6 +430,29 @@ export interface Database {
           updated_at?: string
         }
       }
+      site_settings: {
+        Row: {
+          id: string
+          key: string
+          value: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          value?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          value?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       publication_subscriber_stats: {

@@ -2,12 +2,13 @@ import Link from 'next/link'
 import { getPublicPublications } from '@/lib/db/publications'
 import { getSiteSettings } from '@/lib/db/site-settings'
 import { Database } from '@/types/database'
+import { createClient } from '@/lib/supabase/server'
 
 type Publication = Database['public']['Tables']['publications']['Row']
 
 export default async function HomePage() {
   const settings = await getSiteSettings()
-  
+
   let publications: Publication[]
   try {
     publications = await getPublicPublications()
@@ -16,8 +17,31 @@ export default async function HomePage() {
     publications = []
   }
 
+  // Check if user is authenticated (admin)
+  let isAdmin = false
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    isAdmin = !!user
+  } catch {
+    isAdmin = false
+  }
+
   return (
-    <main className="container" style={{ paddingTop: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)' }}>
+    <main className="container" style={{ paddingTop: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)', position: 'relative' }}>
+      {/* Admin Edit Button */}
+      {isAdmin && (
+        <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+          <Link
+            href="/admin/settings"
+            className="btn btn-secondary"
+            style={{ fontSize: '0.9rem' }}
+          >
+            ✏️ Edit Site Settings
+          </Link>
+        </div>
+      )}
+
       <section style={{ textAlign: 'center', marginBottom: '4rem' }}>
         <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>{settings.site_name}</h1>
         <p style={{ fontSize: '1.25rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
