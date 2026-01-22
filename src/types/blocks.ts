@@ -6,6 +6,7 @@ export interface StoryBlockData {
   image_alt?: string
   link: string
   blurb: string
+  publication_name?: string
 }
 
 export interface PromoBlockData {

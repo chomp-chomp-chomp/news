@@ -141,6 +141,11 @@ function StoryBlock({ data, accentColor }: { data: StoryBlockData; accentColor: 
           {data.title}
         </Link>
       </Heading>
+      {data.publication_name && (
+        <Text style={publicationCredit}>
+          {data.publication_name}
+        </Text>
+      )}
       <Text style={storyBlurb}>{data.blurb}</Text>
       <Link href={data.link} style={{ ...readMore, color: accentColor }}>
         Read more →
@@ -295,6 +300,13 @@ const storyBlurb = {
   color: '#7d7d7d',
   fontSize: '16px',
   lineHeight: '1.6',
+  margin: '0 0 12px',
+}
+
+const publicationCredit = {
+  color: '#999999',
+  fontSize: '14px',
+  fontStyle: 'italic' as const,
   margin: '0 0 12px',
 }
 

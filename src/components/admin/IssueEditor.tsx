@@ -638,6 +638,17 @@ function BlockEditor({ block, isFirst, isLast, onUpdate, onDelete, onMoveUp, onM
                   onBlur={handleBlur}
                 />
               </div>
+              <div>
+                <label className="form-label">Publication Name (Optional)</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={getString('publication_name') || ''}
+                  onChange={(e) => handleChange('publication_name', e.target.value)}
+                  onBlur={handleBlur}
+                  placeholder="e.g., The New York Times"
+                />
+              </div>
               <ImageUpload
                 label="Story Image"
                 currentImage={getString('image_url') || ''}

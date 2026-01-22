@@ -30,11 +30,13 @@ export default function MobileSidebar({ userEmail, publications }: MobileSidebar
           left: '1rem',
           zIndex: 1000,
           padding: '0.75rem',
-          backgroundColor: 'var(--color-surface)',
-          border: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-accent)',
+          color: 'white',
+          border: '1px solid var(--color-accent)',
           borderRadius: 'var(--radius-sm)',
           cursor: 'pointer',
           display: 'none', // Hidden by default, shown via CSS media query
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
         }}
         aria-label="Toggle menu"
       >
