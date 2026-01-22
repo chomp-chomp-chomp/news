@@ -5,6 +5,8 @@ export interface SiteSettings {
   site_description: string
   favicon_url: string
   site_logo_url: string
+  site_logo_url_light: string
+  site_logo_url_dark: string
   og_image_url: string
   twitter_image_url: string
 }
@@ -43,6 +45,8 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       site_description: settings.site_description || process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Subscribe to quality newsletters curated by experts',
       favicon_url: settings.favicon_url || process.env.NEXT_PUBLIC_FAVICON_URL || '',
       site_logo_url: settings.site_logo_url || process.env.NEXT_PUBLIC_SITE_LOGO_URL || '',
+      site_logo_url_light: settings.site_logo_url_light || '',
+      site_logo_url_dark: settings.site_logo_url_dark || '',
       og_image_url: settings.og_image_url || process.env.NEXT_PUBLIC_OG_IMAGE || '',
       twitter_image_url: settings.twitter_image_url || process.env.NEXT_PUBLIC_TWITTER_IMAGE || '',
     }
@@ -61,6 +65,8 @@ function getDefaultSettings(): SiteSettings {
     site_description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Subscribe to quality newsletters curated by experts',
     favicon_url: process.env.NEXT_PUBLIC_FAVICON_URL || '',
     site_logo_url: process.env.NEXT_PUBLIC_SITE_LOGO_URL || '',
+    site_logo_url_light: '',
+    site_logo_url_dark: '',
     og_image_url: process.env.NEXT_PUBLIC_OG_IMAGE || '',
     twitter_image_url: process.env.NEXT_PUBLIC_TWITTER_IMAGE || '',
   }

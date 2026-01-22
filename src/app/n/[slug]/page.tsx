@@ -6,6 +6,7 @@ import { getPublishedIssues } from '@/lib/db/issues'
 import SubscribeForm from '@/components/SubscribeForm'
 import { format } from 'date-fns'
 import { isPublicationAdmin } from '@/lib/auth'
+import ThemedLogo from '@/components/ThemedLogo'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -80,6 +81,12 @@ export default async function PublicationPage({ params, searchParams }: PageProp
   // Check if current user is admin of this publication
   const canEdit = await isPublicationAdmin(publication.id)
 
+  // Extract brand properties for logo
+  const brand = publication.brand as Record<string, string> | null
+  const logoUrl = brand?.logo_url || ''
+  const logoUrlLight = brand?.logo_url_light || ''
+  const logoUrlDark = brand?.logo_url_dark || ''
+
   return (
     <main className="container" style={{ paddingTop: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-xl)', position: 'relative' }}>
       {/* Admin Edit Button */}
@@ -97,20 +104,13 @@ export default async function PublicationPage({ params, searchParams }: PageProp
 
       {/* Header */}
       <section style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        {publication.brand?.logo_url && (
-          <img
-            src={publication.brand.logo_url}
-            alt={publication.name}
-            style={{
-              maxWidth: '150px',
-              height: 'auto',
-              marginBottom: '1.5rem',
-              display: 'block',
-              marginLeft: 'auto',
-              marginRight: 'auto'
-            }}
-          />
-        )}
+        <ThemedLogo
+          lightLogo={logoUrlLight}
+          darkLogo={logoUrlDark}
+          fallbackLogo={logoUrl}
+          alt={publication.name}
+          maxWidth="150px"
+        />
         <h1 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>{publication.name}</h1>
         {publication.description && (
           <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto 1.5rem' }}>
