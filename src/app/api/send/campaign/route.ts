@@ -193,6 +193,7 @@ async function processSendJob(
             )
 
             // Send email via Resend
+            // Note: Disable click tracking in Resend dashboard to avoid double-wrapping URLs
             const { data, error } = await resend.emails.send({
               from: `${publication.fromName} <${publication.fromEmail}>`,
               to: subscriber.email,
@@ -201,6 +202,7 @@ async function processSendJob(
               headers: {
                 'List-Unsubscribe': `<${subscriberRenderModel.urls.unsubscribe}>`,
               },
+              tags: [], // Empty tags to help prevent automatic click tracking
             })
 
             if (error) {
