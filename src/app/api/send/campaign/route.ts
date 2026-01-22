@@ -3,7 +3,7 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { requireAuthApi } from '@/lib/auth'
 import { createLogger } from '@/lib/logger'
 import { resend, EMAIL_CONFIG } from '@/lib/resend'
-import { getRenderModelFromDb } from '@/lib/render-model'
+import { getRenderModelFromDb, shortenRenderModelUrls } from '@/lib/render-model'
 import { render } from '@react-email/render'
 import NewsletterEmail from '@/emails/newsletter-template'
 import { getIssueById } from '@/lib/db/issues'
@@ -153,13 +153,16 @@ async function processSendJob(
     logger.info('Processing send job', { jobId, recipientCount: subscribers.length })
 
     // Get render model (once for all emails)
-    const renderModel = await getRenderModelFromDb(adminSupabase, issueId, {
+    let renderModel = await getRenderModelFromDb(adminSupabase, issueId, {
       baseUrl: process.env.NEXT_PUBLIC_APP_URL,
     })
 
     if (!renderModel) {
       throw new Error('Failed to build render model')
     }
+
+    // Shorten all content URLs (story links, promo links, image links, social links)
+    renderModel = await shortenRenderModelUrls(renderModel)
 
     const { publication, issue } = renderModel
 

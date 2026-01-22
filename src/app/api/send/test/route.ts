@@ -4,7 +4,7 @@ import { requireAuthApi } from '@/lib/auth'
 import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit'
 import { createLogger } from '@/lib/logger'
 import { resend } from '@/lib/resend'
-import { getRenderModelFromDb } from '@/lib/render-model'
+import { getRenderModelFromDb, shortenRenderModelUrls } from '@/lib/render-model'
 import { render } from '@react-email/render'
 import NewsletterEmail from '@/emails/newsletter-template'
 import { getIssueById } from '@/lib/db/issues'
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Build render model
-    const renderModel = await getRenderModelFromDb(supabase, issueId, {
+    let renderModel = await getRenderModelFromDb(supabase, issueId, {
       baseUrl: process.env.NEXT_PUBLIC_APP_URL,
     })
 
@@ -107,6 +107,9 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
+
+    // Shorten all content URLs (story links, promo links, image links, social links)
+    renderModel = await shortenRenderModelUrls(renderModel)
 
     // Render email HTML
     const emailHtml = await render(NewsletterEmail({ renderModel }))

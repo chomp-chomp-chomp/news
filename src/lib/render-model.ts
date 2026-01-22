@@ -4,7 +4,12 @@ import {
   BlockType,
   FooterContent,
   PublicationBrand,
+  StoryBlockData,
+  PromoBlockData,
+  ImageBlockData,
 } from '@/types/blocks'
+import { shortenUrl } from './url-shortener'
+import { logger } from './logger'
 
 type Publication = Database['public']['Tables']['publications']['Row']
 type Issue = Database['public']['Tables']['issues']['Row']
@@ -172,4 +177,114 @@ export async function getRenderModelFromDb(
     footer,
     options
   )
+}
+
+/**
+ * Process a render model and shorten all content URLs.
+ * Shortens URLs in story blocks, promo blocks, image blocks, and footer social links.
+ * Does NOT shorten system URLs like unsubscribe and web version links.
+ *
+ * @param renderModel - The render model to process
+ * @returns A new render model with shortened URLs
+ */
+export async function shortenRenderModelUrls(
+  renderModel: RenderModel
+): Promise<RenderModel> {
+  try {
+    // Create a deep copy to avoid mutating the original
+    const processedModel: RenderModel = JSON.parse(JSON.stringify(renderModel))
+
+    // Collect all URLs that need to be shortened
+    const urlMap = new Map<string, string>() // original URL -> shortened URL
+
+    // Process each block
+    for (const block of processedModel.blocks) {
+      if (block.type === 'story') {
+        const data = block.data as StoryBlockData
+        if (data.link) {
+          urlMap.set(data.link, data.link)
+        }
+      } else if (block.type === 'promo') {
+        const data = block.data as PromoBlockData
+        if (data.link) {
+          urlMap.set(data.link, data.link)
+        }
+      } else if (block.type === 'image') {
+        const data = block.data as ImageBlockData
+        if (data.link) {
+          urlMap.set(data.link, data.link)
+        }
+      }
+    }
+
+    // Process footer social links
+    if (processedModel.footer?.social_links) {
+      for (const socialLink of processedModel.footer.social_links) {
+        if (socialLink.url) {
+          urlMap.set(socialLink.url, socialLink.url)
+        }
+      }
+    }
+
+    // If no URLs to shorten, return the original model
+    if (urlMap.size === 0) {
+      logger.info('No URLs to shorten in render model')
+      return renderModel
+    }
+
+    // Shorten all URLs in parallel
+    const originalUrls = Array.from(urlMap.keys())
+    logger.info(`Shortening ${originalUrls.length} URLs`, {
+      issueId: processedModel.issue.id,
+    })
+
+    const shortenedUrls = await Promise.all(
+      originalUrls.map(url => shortenUrl(url))
+    )
+
+    // Update the map with shortened URLs
+    originalUrls.forEach((originalUrl, index) => {
+      urlMap.set(originalUrl, shortenedUrls[index])
+    })
+
+    // Replace URLs in blocks
+    for (const block of processedModel.blocks) {
+      if (block.type === 'story') {
+        const data = block.data as StoryBlockData
+        if (data.link && urlMap.has(data.link)) {
+          data.link = urlMap.get(data.link)!
+        }
+      } else if (block.type === 'promo') {
+        const data = block.data as PromoBlockData
+        if (data.link && urlMap.has(data.link)) {
+          data.link = urlMap.get(data.link)!
+        }
+      } else if (block.type === 'image') {
+        const data = block.data as ImageBlockData
+        if (data.link && urlMap.has(data.link)) {
+          data.link = urlMap.get(data.link)!
+        }
+      }
+    }
+
+    // Replace URLs in footer social links
+    if (processedModel.footer?.social_links) {
+      for (const socialLink of processedModel.footer.social_links) {
+        if (socialLink.url && urlMap.has(socialLink.url)) {
+          socialLink.url = urlMap.get(socialLink.url)!
+        }
+      }
+    }
+
+    logger.info('Successfully shortened URLs in render model', {
+      issueId: processedModel.issue.id,
+      urlCount: urlMap.size,
+    })
+
+    return processedModel
+  } catch (error) {
+    logger.error('Error shortening render model URLs', { error })
+    // Return original model on error (graceful fallback)
+    return renderModel
+  }
 }
