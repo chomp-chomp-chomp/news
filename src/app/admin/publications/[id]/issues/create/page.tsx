@@ -2,12 +2,60 @@ import { redirect } from 'next/navigation'
 import { requirePublicationAdmin } from '@/lib/auth'
 import { getPublicationById } from '@/lib/db/publications'
 import { createIssue } from '@/lib/db/issues'
-import { getAvailableTemplates } from '@/lib/db/templates'
+import { getAvailableTemplates, NewsletterTemplate } from '@/lib/db/templates'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
 interface PageProps {
   params: Promise<{ id: string }>
+}
+
+async function createIssueAction(
+  publicationId: string,
+  templates: NewsletterTemplate[],
+  formData: FormData
+) {
+  'use server'
+
+  await requirePublicationAdmin(publicationId)
+
+  const subject = formData.get('subject') as string
+  const slug = formData.get('slug') as string
+  const preheader = formData.get('preheader') as string
+  const templateId = formData.get('templateId') as string
+
+  // Basic validation
+  if (!subject || !slug) {
+    throw new Error('Subject and slug are required')
+  }
+
+  // Create issue
+  const issue = await createIssue({
+    publication_id: publicationId,
+    subject,
+    slug: slug.toLowerCase().replace(/\s+/g, '-'),
+    preheader: preheader || null,
+    status: 'draft',
+  })
+
+  // If a template was selected, apply it by creating blocks
+  if (templateId) {
+    const { createBlock } = await import('@/lib/db/issues')
+    const template = templates.find(t => t.id === templateId)
+
+    if (template && template.template_data.blocks) {
+      for (const [index, blockData] of template.template_data.blocks.entries()) {
+        await createBlock({
+          issue_id: issue.id,
+          type: blockData.type as any,
+          data: blockData.data,
+          sort_order: index,
+        })
+      }
+    }
+  }
+
+  redirect(`/admin/publications/${publicationId}/issues/${issue.id}`)
 }
 
 export default async function NewIssuePage({ params }: PageProps) {
@@ -23,54 +71,12 @@ export default async function NewIssuePage({ params }: PageProps) {
     getPublicationById(id),
     getAvailableTemplates(id),
   ])
-  
+
   if (!publication) {
     return notFound()
   }
 
-  async function createIssueAction(formData: FormData) {
-    'use server'
-
-    await requirePublicationAdmin(id)
-
-    const subject = formData.get('subject') as string
-    const slug = formData.get('slug') as string
-    const preheader = formData.get('preheader') as string
-    const templateId = formData.get('templateId') as string
-
-    // Basic validation
-    if (!subject || !slug) {
-      throw new Error('Subject and slug are required')
-    }
-
-    // Create issue
-    const issue = await createIssue({
-      publication_id: id,
-      subject,
-      slug: slug.toLowerCase().replace(/\s+/g, '-'),
-      preheader: preheader || null,
-      status: 'draft',
-    })
-    
-    // If a template was selected, apply it by creating blocks
-    if (templateId) {
-      const { createBlock } = await import('@/lib/db/issues')
-      const template = templates.find(t => t.id === templateId)
-      
-      if (template && template.template_data.blocks) {
-        for (const [index, blockData] of template.template_data.blocks.entries()) {
-          await createBlock({
-            issue_id: issue.id,
-            type: blockData.type as any,
-            data: blockData.data,
-            sort_order: index,
-          })
-        }
-      }
-    }
-
-    redirect(`/admin/publications/${id}/issues/${issue.id}`)
-  }
+  const boundCreateIssueAction = createIssueAction.bind(null, id, templates)
 
   return (
     <div>
@@ -84,7 +90,7 @@ export default async function NewIssuePage({ params }: PageProps) {
       </div>
 
       <div className="card" style={{ maxWidth: '800px' }}>
-        <form action={createIssueAction}>
+        <form action={boundCreateIssueAction}>
           <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
             <div>
               <label htmlFor="subject" className="form-label">
