@@ -488,5 +488,7 @@ export interface Database {
         Returns: boolean
       }
     }
+    Enums: Record<string, never>
+    CompositeTypes: Record<string, never>
   }
 }
