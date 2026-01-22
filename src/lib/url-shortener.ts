@@ -1,5 +1,7 @@
 import { createAdminClient } from './supabase/server'
-import { logger } from './logger'
+import { createLogger } from './logger'
+
+const logger = createLogger({ context: 'url-shortener' })
 
 interface ShortenUrlResponse {
   success: boolean
