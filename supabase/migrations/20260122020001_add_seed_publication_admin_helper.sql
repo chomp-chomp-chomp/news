@@ -11,6 +11,8 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 DECLARE
+  -- Hardcoded seed publication ID from seed.sql
+  -- This matches the ID in supabase/seed/seed.sql for "Chomp Weekly"
   seed_pub_id UUID := '00000000-0000-0000-0000-000000000001';
   current_user_id UUID;
 BEGIN
