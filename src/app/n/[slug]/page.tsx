@@ -109,7 +109,8 @@ export default async function PublicationPage({ params, searchParams }: PageProp
           darkLogo={logoUrlDark}
           fallbackLogo={logoUrl}
           alt={publication.name}
-          maxWidth="150px"
+          maxWidthDesktop="350px"
+          maxWidthMobile="200px"
         />
         <h1 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>{publication.name}</h1>
         {publication.description && (

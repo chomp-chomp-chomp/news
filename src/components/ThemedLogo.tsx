@@ -7,7 +7,8 @@ interface ThemedLogoProps {
   darkLogo?: string
   fallbackLogo?: string
   alt: string
-  maxWidth: string
+  maxWidthDesktop: string
+  maxWidthMobile: string
   className?: string
 }
 
@@ -24,7 +25,8 @@ export default function ThemedLogo({
   darkLogo,
   fallbackLogo,
   alt,
-  maxWidth,
+  maxWidthDesktop,
+  maxWidthMobile,
   className = ''
 }: ThemedLogoProps) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
@@ -55,18 +57,29 @@ export default function ThemedLogo({
   }
 
   return (
-    <img
-      src={logoUrl}
-      alt={alt}
-      className={className}
-      style={{
-        maxWidth,
-        height: 'auto',
-        marginBottom: '1.5rem',
-        display: 'block',
-        marginLeft: 'auto',
-        marginRight: 'auto'
-      }}
-    />
+    <>
+      <img
+        src={logoUrl}
+        alt={alt}
+        className={`themed-logo ${className}`}
+        style={{
+          height: 'auto',
+          marginBottom: '1.5rem',
+          display: 'block',
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }}
+      />
+      <style jsx>{`
+        .themed-logo {
+          max-width: ${maxWidthMobile};
+        }
+        @media (min-width: 768px) {
+          .themed-logo {
+            max-width: ${maxWidthDesktop};
+          }
+        }
+      `}</style>
+    </>
   )
 }

@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -29,9 +28,9 @@
   --shadow-card-hover: 0 4px 12px rgba(231, 59, 66, 0.1);
 
   /* Typography */
-  --font-primary: 'Inter', sans-serif;
-  --font-fallback: 'Source Sans 3', sans-serif;
-  --font-sans: 'Inter', 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-primary: var(--font-plus-jakarta-sans), sans-serif;
+  --font-fallback: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: var(--font-plus-jakarta-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --line-height-base: 1.7;
   --line-height-tight: 1.3;
 

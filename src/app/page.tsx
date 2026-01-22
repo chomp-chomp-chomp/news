@@ -49,7 +49,8 @@ export default async function HomePage() {
           darkLogo={settings.site_logo_url_dark}
           fallbackLogo={settings.site_logo_url}
           alt={settings.site_name}
-          maxWidth="200px"
+          maxWidthDesktop="350px"
+          maxWidthMobile="200px"
         />
         <h1 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>{settings.site_name}</h1>
         <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
