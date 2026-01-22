@@ -20,6 +20,7 @@ import {
   PromoBlockData,
   TextBlockData,
   ImageBlockData,
+  FooterBlockData,
   FooterContent,
 } from '@/types/blocks'
 
@@ -119,6 +120,8 @@ function BlockRenderer({ block, accentColor }: { block: RenderBlock; accentColor
       return <Hr style={divider} />
     case 'image':
       return <ImageBlock data={block.data as any} />
+    case 'footer':
+      return <FooterBlock data={block.data as FooterBlockData} />
     default:
       return null
   }
@@ -215,6 +218,18 @@ function ImageBlock({ data }: { data: ImageBlockData }) {
           {data.caption}
         </Text>
       )}
+    </Section>
+  )
+}
+
+function FooterBlock({ data }: { data: FooterBlockData }) {
+  return (
+    <Section style={contentSection}>
+      <Hr style={divider} />
+      <Text
+        style={footerText}
+        dangerouslySetInnerHTML={{ __html: data.content }}
+      />
     </Section>
   )
 }

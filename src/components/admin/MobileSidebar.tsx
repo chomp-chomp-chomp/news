@@ -81,7 +81,7 @@ export default function MobileSidebar({ userEmail, publications }: MobileSidebar
         className={`admin-sidebar ${isOpen ? 'mobile-open' : ''}`}
         style={{
           width: '250px',
-          backgroundColor: 'var(--color-sidebar)',
+          backgroundColor: 'var(--color-sidebar-bg)',
           borderRight: '1px solid var(--color-border)',
           padding: 'var(--spacing-md)',
           display: 'flex',
