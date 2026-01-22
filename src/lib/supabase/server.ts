@@ -1,5 +1,4 @@
 import { createServerClient } from '@supabase/ssr'
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { Database } from '@/types/database'
 
@@ -61,11 +60,16 @@ export async function createAdminClient() {
     )
   }
 
-  return createSupabaseClient<Database>(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-      detectSessionInUrl: false,
-    },
-  })
+  return createServerClient<Database>(
+    supabaseUrl,
+    supabaseServiceRoleKey,
+    {
+      cookies: {
+        getAll() {
+          return []
+        },
+        setAll() {},
+      },
+    }
+  ) as any // Type workaround for @supabase/ssr 0.8.0
 }
