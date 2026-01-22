@@ -43,6 +43,20 @@ export default async function HomePage() {
       )}
 
       <section style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        {settings.site_logo_url && (
+          <img
+            src={settings.site_logo_url}
+            alt={settings.site_name}
+            style={{
+              maxWidth: '200px',
+              height: 'auto',
+              marginBottom: '1.5rem',
+              display: 'block',
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}
+          />
+        )}
         <h1 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>{settings.site_name}</h1>
         <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
           {settings.site_description}

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { getPublicationBySlug, getPublicationStats } from '@/lib/db/publications'
 import { getPublishedIssues } from '@/lib/db/issues'
 import SubscribeForm from '@/components/SubscribeForm'
@@ -9,6 +10,58 @@ import { isPublicationAdmin } from '@/lib/auth'
 interface PageProps {
   params: Promise<{ slug: string }>
   searchParams: Promise<{ message?: string }>
+}
+
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const publication = await getPublicationBySlug(slug)
+
+  if (!publication || !publication.is_public) {
+    return {}
+  }
+
+  const brand = publication.brand as Record<string, string> | null
+  const logoUrl = brand?.logo_url
+  const headerImageUrl = brand?.header_image_url
+  const ogImage = headerImageUrl || logoUrl
+
+  return {
+    title: publication.name,
+    description: publication.description || `Subscribe to ${publication.name} newsletter`,
+    ...(logoUrl && {
+      icons: {
+        icon: logoUrl,
+      },
+    }),
+    openGraph: {
+      type: 'website',
+      locale: 'en_US',
+      url: `${siteUrl}/n/${slug}`,
+      title: publication.name,
+      description: publication.description || `Subscribe to ${publication.name} newsletter`,
+      siteName: publication.name,
+      ...(ogImage && {
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: publication.name,
+          },
+        ],
+      }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: publication.name,
+      description: publication.description || `Subscribe to ${publication.name} newsletter`,
+      ...(ogImage && {
+        images: [ogImage],
+      }),
+    },
+  }
 }
 
 export default async function PublicationPage({ params, searchParams }: PageProps) {
@@ -43,10 +96,24 @@ export default async function PublicationPage({ params, searchParams }: PageProp
       )}
 
       {/* Header */}
-      <section style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>{publication.name}</h1>
+      <section style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        {publication.brand?.logo_url && (
+          <img
+            src={publication.brand.logo_url}
+            alt={publication.name}
+            style={{
+              maxWidth: '150px',
+              height: 'auto',
+              marginBottom: '1.5rem',
+              display: 'block',
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}
+          />
+        )}
+        <h1 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>{publication.name}</h1>
         {publication.description && (
-          <p style={{ fontSize: '1.25rem', color: 'var(--color-text-muted)', maxWidth: '700px', margin: '0 auto 2rem' }}>
+          <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto 1.5rem' }}>
             {publication.description}
           </p>
         )}
