@@ -3,6 +3,7 @@ import { requireAuth, getUserPublications } from '@/lib/auth'
 import { getPublicationStats } from '@/lib/db/publications'
 import { getPublicationIssues } from '@/lib/db/issues'
 import { Database } from '@/types/database'
+import GrantSeedAccessButton from '@/components/admin/GrantSeedAccessButton'
 
 type Publication = Database['public']['Tables']['publications']['Row']
 
@@ -30,11 +31,15 @@ export default async function AdminDashboard() {
         <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
           <h2 style={{ marginBottom: '1rem' }}>Welcome!</h2>
           <p className="text-muted" style={{ marginBottom: '2rem' }}>
-            You don't have any publications yet. Create your first newsletter to get started.
+            You don't have any publications yet. Get started by creating a new newsletter or accessing the demo publication.
           </p>
-          <Link href="/admin/publications/create" className="btn btn-primary">
-            Create Publication
-          </Link>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+            <Link href="/admin/publications/create" className="btn btn-primary">
+              Create New Publication
+            </Link>
+            <div style={{ margin: '0.5rem 0', color: 'var(--color-text-muted)' }}>or</div>
+            <GrantSeedAccessButton />
+          </div>
         </div>
       ) : (
         <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
