@@ -177,7 +177,7 @@ export default function PublicationForm({
             <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
               <div>
                 <label htmlFor="logoUrl" className="form-label">
-                  Logo URL
+                  Logo URL (Fallback)
                 </label>
                 <input
                   type="url"
@@ -188,7 +188,41 @@ export default function PublicationForm({
                   defaultValue={(initialData?.brand as Record<string, unknown>)?.logo_url as string || ''}
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
-                  URL to your publication logo (displayed in emails and public pages)
+                  URL to your publication logo (used if theme-specific logos are not set)
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="logoUrlLight" className="form-label">
+                  Logo URL (Light Mode)
+                </label>
+                <input
+                  type="url"
+                  id="logoUrlLight"
+                  name="logoUrlLight"
+                  className="form-input"
+                  placeholder="https://example.com/logo-light.png"
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.logo_url_light as string || ''}
+                />
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Logo shown in light mode (optional - uses fallback if empty)
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="logoUrlDark" className="form-label">
+                  Logo URL (Dark Mode)
+                </label>
+                <input
+                  type="url"
+                  id="logoUrlDark"
+                  name="logoUrlDark"
+                  className="form-input"
+                  placeholder="https://example.com/logo-dark.png"
+                  defaultValue={(initialData?.brand as Record<string, unknown>)?.logo_url_dark as string || ''}
+                />
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Logo shown in dark mode (optional - uses fallback if empty)
                 </p>
               </div>
 

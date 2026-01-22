@@ -13,6 +13,8 @@ export default function SiteSettingsPage() {
     site_description: '',
     favicon_url: '',
     site_logo_url: '',
+    site_logo_url_light: '',
+    site_logo_url_dark: '',
     og_image_url: '',
     twitter_image_url: '',
   })
@@ -32,6 +34,8 @@ export default function SiteSettingsPage() {
         site_description: data.site_description || '',
         favicon_url: data.favicon_url || '',
         site_logo_url: data.site_logo_url || '',
+        site_logo_url_light: data.site_logo_url_light || '',
+        site_logo_url_dark: data.site_logo_url_dark || '',
         og_image_url: data.og_image_url || '',
         twitter_image_url: data.twitter_image_url || '',
       })
@@ -157,7 +161,7 @@ export default function SiteSettingsPage() {
             </div>
 
             <div>
-              <label className="form-label">Site Logo URL</label>
+              <label className="form-label">Site Logo URL (Fallback)</label>
               <input
                 type="url"
                 className="form-input"
@@ -166,7 +170,35 @@ export default function SiteSettingsPage() {
                 placeholder="https://example.com/logo.png"
               />
               <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
-                The URL to your site's main logo
+                The URL to your site's main logo (used if theme-specific logos are not set)
+              </p>
+            </div>
+
+            <div>
+              <label className="form-label">Site Logo URL (Light Mode)</label>
+              <input
+                type="url"
+                className="form-input"
+                value={settings.site_logo_url_light}
+                onChange={(e) => handleChange('site_logo_url_light', e.target.value)}
+                placeholder="https://example.com/logo-light.png"
+              />
+              <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                Logo shown in light mode (optional - uses fallback if empty)
+              </p>
+            </div>
+
+            <div>
+              <label className="form-label">Site Logo URL (Dark Mode)</label>
+              <input
+                type="url"
+                className="form-input"
+                value={settings.site_logo_url_dark}
+                onChange={(e) => handleChange('site_logo_url_dark', e.target.value)}
+                placeholder="https://example.com/logo-dark.png"
+              />
+              <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                Logo shown in dark mode (optional - uses fallback if empty)
               </p>
             </div>
           </div>

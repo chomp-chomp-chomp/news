@@ -42,6 +42,8 @@ export default async function EditPublicationPage({ params }: PageProps) {
       
       // Branding fields
       const logoUrl = formData.get('logoUrl') as string
+      const logoUrlLight = formData.get('logoUrlLight') as string
+      const logoUrlDark = formData.get('logoUrlDark') as string
       const accentColor = formData.get('accentColor') as string
       const headerImageUrl = formData.get('headerImageUrl') as string
       const fontFamily = formData.get('fontFamily') as string
@@ -58,15 +60,19 @@ export default async function EditPublicationPage({ params }: PageProps) {
       // Build brand object
       interface BrandSettings {
         logo_url?: string
+        logo_url_light?: string
+        logo_url_dark?: string
         accent_color?: string
         header_image_url?: string
         font_family?: string
         font_size?: string
         [key: string]: string | undefined
       }
-      
+
       const brand: BrandSettings = {}
       if (logoUrl) brand.logo_url = logoUrl
+      if (logoUrlLight) brand.logo_url_light = logoUrlLight
+      if (logoUrlDark) brand.logo_url_dark = logoUrlDark
       if (accentColor) brand.accent_color = accentColor
       if (headerImageUrl) brand.header_image_url = headerImageUrl
       if (fontFamily) brand.font_family = fontFamily
