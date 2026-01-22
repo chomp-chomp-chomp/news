@@ -42,15 +42,15 @@ export default async function HomePage() {
         </div>
       )}
 
-      <section style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>{settings.site_name}</h1>
-        <p style={{ fontSize: '1.25rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
+      <section style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <h1 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>{settings.site_name}</h1>
+        <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
           {settings.site_description}
         </p>
       </section>
 
       <section>
-        <h2 style={{ marginBottom: '2rem' }}>All Newsletters</h2>
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>All Newsletters</h2>
         {publications.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
             <p style={{ color: 'var(--color-text-muted)' }}>No newsletters available yet.</p>
