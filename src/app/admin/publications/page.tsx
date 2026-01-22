@@ -52,89 +52,100 @@ export default async function PublicationsPage() {
           </div>
         </div>
       ) : (
-        <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
-          {pubsWithStats.map((pub) => (
-            <Link
-              href={`/admin/publications/${pub.id}`}
-              key={pub.id}
-              className="card"
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'start',
-                marginBottom: '1rem'
-              }}>
-                <div>
-                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-                    {pub.name}
-                  </h3>
-                  {pub.description && (
-                    <p className="text-muted" style={{ fontSize: '0.9rem' }}>
-                      {pub.description}
-                    </p>
-                  )}
-                  <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
-                    /{pub.slug}
-                  </p>
-                </div>
-                <span style={{
-                  padding: '0.25rem 0.75rem',
-                  backgroundColor: pub.is_public ? 'var(--color-sidebar)' : '#f8d7da',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: '0.85rem',
+        <>
+          <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
+            {pubsWithStats.map((pub) => (
+              <Link
+                href={`/admin/publications/${pub.id}`}
+                key={pub.id}
+                className="card"
+                style={{
+                  textDecoration: 'none',
+                  color: 'inherit',
+                }}
+              >
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  marginBottom: '1rem'
                 }}>
-                  {pub.is_public ? 'Public' : 'Private'}
-                </span>
-              </div>
+                  <div>
+                    <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
+                      {pub.name}
+                    </h3>
+                    {pub.description && (
+                      <p className="text-muted" style={{ fontSize: '0.9rem' }}>
+                        {pub.description}
+                      </p>
+                    )}
+                    <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                      /{pub.slug}
+                    </p>
+                  </div>
+                  <span style={{
+                    padding: '0.25rem 0.75rem',
+                    backgroundColor: pub.is_public ? 'var(--color-sidebar)' : '#f8d7da',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: '0.85rem',
+                  }}>
+                    {pub.is_public ? 'Public' : 'Private'}
+                  </span>
+                </div>
 
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '1.5rem',
-                paddingTop: '1rem',
-                borderTop: '1px solid var(--color-border)',
-              }}>
-                <div>
-                  <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>
-                    Active Subscribers
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '1.5rem',
+                  paddingTop: '1rem',
+                  borderTop: '1px solid var(--color-border)',
+                }}>
+                  <div>
+                    <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>
+                      Active Subscribers
+                    </div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 500 }}>
+                      {pub.stats.active_count}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 500 }}>
-                    {pub.stats.active_count}
+                  <div>
+                    <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>
+                      Total Subscribers
+                    </div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 500 }}>
+                      {pub.stats.total_count}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>
+                      Issues
+                    </div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 500 }}>
+                      {pub.issueCount}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>
+                      Pending
+                    </div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 500 }}>
+                      {pub.stats.pending_count}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>
-                    Total Subscribers
-                  </div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 500 }}>
-                    {pub.stats.total_count}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>
-                    Issues
-                  </div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 500 }}>
-                    {pub.issueCount}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>
-                    Pending
-                  </div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 500 }}>
-                    {pub.stats.pending_count}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Seed Publication Access */}
+          <div className="card" style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'var(--color-sidebar-bg)' }}>
+            <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Don't see "Chomp Weekly"?</h3>
+            <p className="text-muted" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
+              Chomp Weekly is a demo publication with sample data. Click below to grant yourself access.
+            </p>
+            <GrantSeedAccessButton />
+          </div>
+        </>
       )}
     </div>
   )
