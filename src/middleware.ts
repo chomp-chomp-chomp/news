@@ -36,7 +36,11 @@ export async function middleware(request: NextRequest) {
 
   // Protect admin routes
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!user) {
+    // Check if this is a Server Action request
+    // Server Actions in Next.js use special headers and should handle their own auth
+    const isServerAction = request.headers.get('Next-Action') !== null
+
+    if (!user && !isServerAction) {
       const redirectUrl = request.nextUrl.clone()
       redirectUrl.pathname = '/login'
       redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
