@@ -9,7 +9,9 @@ import {
   ImageBlockData,
 } from '@/types/blocks'
 import { shortenUrl } from './url-shortener'
-import { logger } from './logger'
+import { createLogger } from './logger'
+
+const logger = createLogger({ context: 'render-model' })
 
 type Publication = Database['public']['Tables']['publications']['Row']
 type Issue = Database['public']['Tables']['issues']['Row']
