@@ -67,7 +67,7 @@ export default function NewsletterEmail({ renderModel }: NewsletterEmailProps) {
             <BlockRenderer key={block.id} block={block} accentColor={accentColor} />
           ))}
 
-          {/* Footer */}
+          {/* Optional Footer Content */}
           {footer && (
             <Section style={footerSection}>
               <Hr style={divider} />
@@ -90,18 +90,22 @@ export default function NewsletterEmail({ renderModel }: NewsletterEmailProps) {
               {footer.address && (
                 <Text style={address}>{footer.address}</Text>
               )}
-
-              <Text style={footerLinks}>
-                <Link href={urls.webVersion} style={{ ...link, color: accentColor }}>
-                  View in browser
-                </Link>
-                {' · '}
-                <Link href={urls.unsubscribe} style={{ ...link, color: accentColor }}>
-                  Unsubscribe
-                </Link>
-              </Text>
             </Section>
           )}
+
+          {/* Required Unsubscribe Links - ALWAYS SHOWN */}
+          <Section style={footerSection}>
+            {!footer && <Hr style={divider} />}
+            <Text style={footerLinks}>
+              <Link href={urls.webVersion} style={{ ...link, color: accentColor }}>
+                View in browser
+              </Link>
+              {' · '}
+              <Link href={urls.unsubscribe} style={{ ...link, color: accentColor }}>
+                Unsubscribe
+              </Link>
+            </Text>
+          </Section>
         </Container>
       </Body>
     </Html>

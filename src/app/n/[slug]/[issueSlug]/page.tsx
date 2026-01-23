@@ -48,9 +48,9 @@ export default async function IssuePage({ params }: PageProps) {
         </nav>
 
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{issue.subject}</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 500, marginBottom: '0.5rem' }}>{issue.subject}</h1>
           {issue.published_at && (
-            <p className="text-muted">
+            <p className="text-muted" style={{ fontSize: '0.9rem' }}>
               {format(new Date(issue.published_at), 'MMMM d, yyyy')}
             </p>
           )}
