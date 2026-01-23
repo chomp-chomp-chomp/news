@@ -5,7 +5,8 @@ import { getIssueBySlug } from '@/lib/db/issues'
 import { getRenderModelFromDb } from '@/lib/render-model'
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
-import IssueRenderer from '@/components/IssueRenderer'
+import { getWebTemplateComponent } from '@/lib/web-templates/loader'
+import { WebTemplateId } from '@/lib/web-templates/registry'
 
 interface PageProps {
   params: Promise<{ slug: string; issueSlug: string }>
@@ -35,6 +36,10 @@ export default async function IssuePage({ params }: PageProps) {
     notFound()
   }
 
+  // Get the web template component for this publication
+  const templateId = (renderModel.publication.web_template || 'classic') as WebTemplateId
+  const WebTemplateComponent = getWebTemplateComponent(templateId)
+
   return (
     <main style={{ paddingTop: 'var(--spacing-lg)', paddingBottom: 'var(--spacing-xl)' }}>
       {/* Header */}
@@ -57,8 +62,8 @@ export default async function IssuePage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Issue Content */}
-      <IssueRenderer renderModel={renderModel} />
+      {/* Issue Content - using selected web template */}
+      <WebTemplateComponent renderModel={renderModel} />
 
       {/* Footer */}
       <div className="container" style={{ marginTop: '3rem', textAlign: 'center' }}>
