@@ -19,25 +19,17 @@ async function createPublicationAction(
     const fromName = formData.get('fromName') as string
     const fromEmail = formData.get('fromEmail') as string
     const replyToEmail = formData.get('replyToEmail') as string
+    const emailTemplate = formData.get('emailTemplate') as string
     const isPublic = formData.get('isPublic') === 'on'
 
-      const name = formData.get('name') as string
-      const slug = formData.get('slug') as string
-      const description = formData.get('description') as string
-      const fromName = formData.get('fromName') as string
-      const fromEmail = formData.get('fromEmail') as string
-      const replyToEmail = formData.get('replyToEmail') as string
-      const emailTemplate = formData.get('emailTemplate') as string
-      const isPublic = formData.get('isPublic') === 'on'
-
-      // Branding fields
-      const logoUrl = formData.get('logoUrl') as string
-      const logoUrlLight = formData.get('logoUrlLight') as string
-      const logoUrlDark = formData.get('logoUrlDark') as string
-      const accentColor = formData.get('accentColor') as string
-      const headerImageUrl = formData.get('headerImageUrl') as string
-      const fontFamily = formData.get('fontFamily') as string
-      const fontSize = formData.get('fontSize') as string
+    // Branding fields
+    const logoUrl = formData.get('logoUrl') as string
+    const logoUrlLight = formData.get('logoUrlLight') as string
+    const logoUrlDark = formData.get('logoUrlDark') as string
+    const accentColor = formData.get('accentColor') as string
+    const headerImageUrl = formData.get('headerImageUrl') as string
+    const fontFamily = formData.get('fontFamily') as string
+    const fontSize = formData.get('fontSize') as string
 
     // Basic validation
     if (!name || !slug || !fromName || !fromEmail) {
@@ -70,21 +62,21 @@ async function createPublicationAction(
     if (fontFamily) brand.font_family = fontFamily
     if (fontSize) brand.font_size = fontSize
 
-      // Create publication
-      const publication = await createPublication(
-        {
-          name,
-          slug: slug.toLowerCase().replace(/\s+/g, '-'),
-          description: description || null,
-          from_name: fromName,
-          from_email: fromEmail,
-          reply_to_email: replyToEmail || null,
-          email_template: emailTemplate || 'classic',
-          is_public: isPublic,
-          brand: Object.keys(brand).length > 0 ? brand : {},
-        },
-        user.id
-      )
+    // Create publication
+    const publication = await createPublication(
+      {
+        name,
+        slug: slug.toLowerCase().replace(/\s+/g, '-'),
+        description: description || null,
+        from_name: fromName,
+        from_email: fromEmail,
+        reply_to_email: replyToEmail || null,
+        email_template: emailTemplate || 'classic',
+        is_public: isPublic,
+        brand: Object.keys(brand).length > 0 ? brand : {},
+      },
+      user.id
+    )
 
     console.log('Publication created:', publication.id)
 

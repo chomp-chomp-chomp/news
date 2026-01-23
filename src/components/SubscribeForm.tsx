@@ -27,23 +27,27 @@ export default function SubscribeForm({ publicationId }: SubscribeFormProps) {
     try {
       const response = await fetch('/api/subscribe', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
         body: JSON.stringify({ publicationId, email }),
       })
 
-      const contentType = response.headers.get('content-type') || ''
-      if (!contentType.includes('application/json')) {
+      const responseText = await response.text()
+      const data = responseText ? safeParseJson(responseText) : null
+
+      if (!response.ok) {
+        const errorMessage = data?.error || data?.message || 'Failed to subscribe'
+        throw new Error(errorMessage)
+      }
+
+      if (!data) {
         throw new Error('Unexpected response from server. Please try again.')
       }
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to subscribe')
-      }
-
       setStatus('success')
-      setMessage(data.message)
+      setMessage(data.message || 'Success! Check your email to confirm your subscription.')
       setEmail('')
     } catch (error) {
       setStatus('error')
@@ -100,4 +104,12 @@ export default function SubscribeForm({ publicationId }: SubscribeFormProps) {
       </p>
     </div>
   )
+}
+
+function safeParseJson(payload: string) {
+  try {
+    return JSON.parse(payload)
+  } catch {
+    return null
+  }
 }
