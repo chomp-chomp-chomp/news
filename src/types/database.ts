@@ -18,6 +18,7 @@ export interface Database {
           from_name: string
           from_email: string
           reply_to_email: string | null
+          email_template: string | null
           brand: Json
           default_footer_id: string | null
           is_public: boolean
@@ -34,6 +35,7 @@ export interface Database {
           from_name: string
           from_email: string
           reply_to_email?: string | null
+          email_template?: string | null
           brand?: Json
           default_footer_id?: string | null
           is_public?: boolean
@@ -50,6 +52,7 @@ export interface Database {
           from_name?: string
           from_email?: string
           reply_to_email?: string | null
+          email_template?: string | null
           brand?: Json
           default_footer_id?: string | null
           is_public?: boolean
