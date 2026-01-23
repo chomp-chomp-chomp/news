@@ -34,6 +34,7 @@ export interface RenderModel {
     brand: PublicationBrand
     fromName: string
     fromEmail: string
+    email_template: string | null
   }
 
   // Issue info
@@ -104,6 +105,7 @@ export function buildRenderModel(
       brand: (publication.brand as PublicationBrand) || {},
       fromName: publication.from_name,
       fromEmail: publication.from_email,
+      email_template: publication.email_template,
     },
     issue: {
       id: issue.id,

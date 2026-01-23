@@ -50,9 +50,9 @@ function BlockRenderer({ block }: { block: RenderBlock }) {
 
 function StoryBlock({ data }: { data: StoryBlockData }) {
   return (
-    <section style={{ marginBottom: '3rem' }}>
+    <section style={{ marginBottom: '2.5rem' }}>
       {data.image_url && (
-        <Link href={data.link} style={{ display: 'block', marginBottom: '1.5rem' }}>
+        <Link href={data.link} style={{ display: 'block', marginBottom: '1.25rem' }}>
           <img
             src={data.image_url}
             alt={data.image_alt || data.title}
@@ -65,15 +65,15 @@ function StoryBlock({ data }: { data: StoryBlockData }) {
           />
         </Link>
       )}
-      <h2 style={{ fontSize: '1.75rem', marginBottom: '1rem' }}>
+      <h2 style={{ fontSize: '1.375rem', fontWeight: 500, lineHeight: 1.3, marginBottom: '0.75rem' }}>
         <Link href={data.link} style={{ color: 'inherit', textDecoration: 'none' }}>
           {data.title}
         </Link>
       </h2>
-      <p style={{ color: 'var(--color-text)', fontSize: '1.1rem', lineHeight: '1.7', marginBottom: '1rem' }}>
+      <p style={{ color: 'var(--color-text-muted)', fontSize: '1rem', lineHeight: '1.6', marginBottom: '0.75rem' }}>
         {data.blurb}
       </p>
-      <Link href={data.link} style={{ fontWeight: 500 }}>
+      <Link href={data.link} style={{ fontSize: '1rem', fontWeight: 500 }}>
         Read more →
       </Link>
     </section>
@@ -87,16 +87,16 @@ function PromoBlock({ data }: { data: PromoBlockData }) {
   return (
     <section
       style={{
-        backgroundColor: data.background_color || 'var(--color-sidebar)',
-        padding: '2rem',
+        backgroundColor: data.background_color || 'var(--color-sidebar-bg)',
+        padding: '1.875rem 1.25rem',
         borderRadius: 'var(--radius-md)',
-        marginBottom: '3rem',
+        marginBottom: '1.875rem',
         textAlign: 'center',
       }}
     >
-      <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>{data.title}</h3>
-      <div 
-        style={{ fontSize: '1.1rem', lineHeight: '1.7', marginBottom: data.link ? '1.5rem' : 0 }}
+      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem' }}>{data.title}</h3>
+      <div
+        style={{ fontSize: '1rem', lineHeight: '1.6', marginBottom: data.link ? '1.25rem' : 0 }}
         dangerouslySetInnerHTML={{ __html: data.content }}
       />
       {data.link && (
@@ -114,11 +114,11 @@ function TextBlock({ data }: { data: TextBlockData }) {
   // created by authenticated admin users
   return (
     <section style={{
-      marginBottom: '2rem',
+      marginBottom: '1.25rem',
       textAlign: data.alignment || 'left',
     }}>
-      <div 
-        style={{ fontSize: '1.1rem', lineHeight: '1.7' }}
+      <div
+        style={{ fontSize: '1rem', lineHeight: '1.7' }}
         dangerouslySetInnerHTML={{ __html: data.content }}
       />
     </section>
