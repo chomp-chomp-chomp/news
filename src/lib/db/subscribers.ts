@@ -5,6 +5,7 @@ import { parse } from 'papaparse'
 type Subscriber = Database['public']['Tables']['subscribers']['Row']
 type SubscriberInsert = Database['public']['Tables']['subscribers']['Insert']
 type SubscriberUpdate = Database['public']['Tables']['subscribers']['Update']
+type SubscriberStatus = Database['public']['Tables']['subscribers']['Row']['status']
 
 /**
  * Get all subscribers for a publication
@@ -12,7 +13,7 @@ type SubscriberUpdate = Database['public']['Tables']['subscribers']['Update']
 export async function getPublicationSubscribers(
   publicationId: string,
   filters?: {
-    status?: string
+    status?: SubscriberStatus
     search?: string
   }
 ) {
