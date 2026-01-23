@@ -31,6 +31,11 @@ export default function SubscribeForm({ publicationId }: SubscribeFormProps) {
         body: JSON.stringify({ publicationId, email }),
       })
 
+      const contentType = response.headers.get('content-type') || ''
+      if (!contentType.includes('application/json')) {
+        throw new Error('Unexpected response from server. Please try again.')
+      }
+
       const data = await response.json()
 
       if (!response.ok) {
