@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuthApi } from '@/lib/auth'
 import { createAdminClient } from '@/lib/supabase/server'
+import { Database } from '@/types/database'
 import { z } from 'zod'
 
 const updateSettingsSchema = z.record(z.string(), z.string())
@@ -62,10 +63,17 @@ export async function PATCH(request: NextRequest) {
     const supabase = await createAdminClient()
 
     // Update each setting
-    const updates = Object.entries(settings).map(([key, value]) => 
+    const updates = Object.entries(settings).map(([key, value]) =>
       supabase
         .from('site_settings')
-        .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' })
+        .upsert(
+          {
+            key,
+            value: value as string,
+            updated_at: new Date().toISOString()
+          } as Database['public']['Tables']['site_settings']['Insert'],
+          { onConflict: 'key' }
+        )
     )
 
     const results = await Promise.all(updates)
