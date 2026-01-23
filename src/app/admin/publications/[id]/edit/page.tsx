@@ -38,8 +38,9 @@ export default async function EditPublicationPage({ params }: PageProps) {
       const fromName = formData.get('fromName') as string
       const fromEmail = formData.get('fromEmail') as string
       const replyToEmail = formData.get('replyToEmail') as string
+      const emailTemplate = formData.get('emailTemplate') as string
       const isPublic = formData.get('isPublic') === 'on'
-      
+
       // Branding fields
       const logoUrl = formData.get('logoUrl') as string
       const logoUrlLight = formData.get('logoUrlLight') as string
@@ -86,6 +87,7 @@ export default async function EditPublicationPage({ params }: PageProps) {
         from_name: fromName,
         from_email: fromEmail,
         reply_to_email: replyToEmail || null,
+        email_template: emailTemplate || 'classic',
         is_public: isPublic,
         brand: Object.keys(brand).length > 0 ? brand : {},
       })

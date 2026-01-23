@@ -4,6 +4,7 @@ import { useFormState } from 'react-dom'
 import Link from 'next/link'
 import { FormState } from './types'
 import { Database } from '@/types/database'
+import { EMAIL_TEMPLATES, EmailTemplateId, getAllTemplates } from '@/lib/email-templates/registry'
 
 type Publication = Database['public']['Tables']['publications']['Row']
 
@@ -161,6 +162,27 @@ export default function PublicationForm({
                 />
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
                   Where replies are sent (defaults to From Email)
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="emailTemplate" className="form-label">
+                  Email Template
+                </label>
+                <select
+                  id="emailTemplate"
+                  name="emailTemplate"
+                  className="form-input"
+                  defaultValue={initialData?.email_template || 'classic'}
+                >
+                  {getAllTemplates().map((template) => (
+                    <option key={template.id} value={template.id}>
+                      {template.name} - {template.description}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Choose the email layout template for your newsletters
                 </p>
               </div>
             </div>
