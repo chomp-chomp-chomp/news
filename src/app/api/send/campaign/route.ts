@@ -5,7 +5,8 @@ import { createLogger } from '@/lib/logger'
 import { resend, EMAIL_CONFIG } from '@/lib/resend'
 import { getRenderModelFromDb, shortenRenderModelUrls } from '@/lib/render-model'
 import { render } from '@react-email/render'
-import NewsletterEmail from '@/emails/newsletter-template'
+import { renderEmailTemplate } from '@/lib/email-templates/loader'
+import { EmailTemplateId } from '@/lib/email-templates/registry'
 import { getIssueById } from '@/lib/db/issues'
 import { z } from 'zod'
 
@@ -166,6 +167,9 @@ async function processSendJob(
 
     const { publication, issue } = renderModel
 
+    // Get the email template for this publication
+    const templateId = (publication.email_template || 'classic') as EmailTemplateId
+
     let sentCount = 0
     let failedCount = 0
 
@@ -187,9 +191,9 @@ async function processSendJob(
               },
             }
 
-            // Render email HTML
+            // Render email HTML using the selected template
             const emailHtml = await render(
-              NewsletterEmail({ renderModel: subscriberRenderModel })
+              renderEmailTemplate(subscriberRenderModel, templateId)
             )
 
             // Send email via Resend

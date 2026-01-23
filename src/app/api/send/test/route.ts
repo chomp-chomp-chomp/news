@@ -6,7 +6,8 @@ import { createLogger } from '@/lib/logger'
 import { resend } from '@/lib/resend'
 import { getRenderModelFromDb, shortenRenderModelUrls } from '@/lib/render-model'
 import { render } from '@react-email/render'
-import NewsletterEmail from '@/emails/newsletter-template'
+import { renderEmailTemplate } from '@/lib/email-templates/loader'
+import { EmailTemplateId } from '@/lib/email-templates/registry'
 import { getIssueById } from '@/lib/db/issues'
 import { z } from 'zod'
 
@@ -111,8 +112,11 @@ export async function POST(request: NextRequest) {
     // Shorten all content URLs (story links, promo links, image links, social links)
     renderModel = await shortenRenderModelUrls(renderModel)
 
-    // Render email HTML
-    const emailHtml = await render(NewsletterEmail({ renderModel }))
+    // Get the email template for this publication
+    const templateId = (renderModel.publication.email_template || 'classic') as EmailTemplateId
+
+    // Render email HTML using the selected template
+    const emailHtml = await render(renderEmailTemplate(renderModel, templateId))
 
     // Send test email
     console.log('Sending test email with config:', {
