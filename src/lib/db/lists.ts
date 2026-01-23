@@ -152,8 +152,8 @@ export async function getListSubscribers(listId: string) {
   try {
     const supabase = await createAdminClient()
 
-    const { data, error } = await supabase
-      .from('subscriber_lists')
+    const query = supabase.from('subscriber_lists') as any
+    const { data, error } = await query
       .select(`
         *,
         subscribers:subscriber_id (*)
@@ -179,8 +179,8 @@ export async function getSubscriberLists(subscriberId: string) {
   try {
     const supabase = await createAdminClient()
 
-    const { data, error } = await supabase
-      .from('subscriber_lists')
+    const query = supabase.from('subscriber_lists') as any
+    const { data, error } = await query
       .select(`
         *,
         publication_lists:list_id (*)
