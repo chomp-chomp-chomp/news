@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
-import { Database } from '@/types/database'
+import { DatabaseWithRelationships } from '@/types/database'
 
 export async function createClient() {
   const cookieStore = await cookies()
@@ -21,7 +21,7 @@ export async function createClient() {
     )
   }
 
-  return createServerClient<Database>(
+  return createServerClient<DatabaseWithRelationships>(
     supabaseUrl,
     supabaseAnonKey,
     {
@@ -61,7 +61,7 @@ export async function createAdminClient() {
     )
   }
 
-  return createSupabaseClient<Database>(supabaseUrl, supabaseServiceRoleKey, {
+  return createSupabaseClient<DatabaseWithRelationships>(supabaseUrl, supabaseServiceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,

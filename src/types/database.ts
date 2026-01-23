@@ -1,3 +1,5 @@
+import type { GenericRelationship } from '@supabase/supabase-js'
+
 export type Json =
   | string
   | number
@@ -496,5 +498,20 @@ export interface Database {
     }
     Enums: Record<string, never>
     CompositeTypes: Record<string, never>
+  }
+}
+
+type TablesWithRelationships<T extends Record<string, { Row: unknown; Insert: unknown; Update: unknown }>> = {
+  [K in keyof T]: T[K] & { Relationships: GenericRelationship[] }
+}
+
+type ViewsWithRelationships<T extends Record<string, { Row: unknown }>> = {
+  [K in keyof T]: T[K] & { Relationships: GenericRelationship[] }
+}
+
+export type DatabaseWithRelationships = Omit<Database, 'public'> & {
+  public: Omit<Database['public'], 'Tables' | 'Views'> & {
+    Tables: TablesWithRelationships<Database['public']['Tables']>
+    Views: ViewsWithRelationships<Database['public']['Views']>
   }
 }
