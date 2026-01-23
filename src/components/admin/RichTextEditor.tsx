@@ -23,6 +23,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
       }),
     ],
     content,
+    editable: true,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
     },
@@ -32,7 +33,8 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           min-height: 150px;
           padding: 0.75rem;
           border: 1px solid var(--color-border);
-          border-radius: var(--radius-sm);
+          border-top: none;
+          border-radius: 0 0 var(--radius-sm) var(--radius-sm);
           background: var(--color-surface);
           color: var(--color-text);
           font-family: inherit;
@@ -65,7 +67,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
   }
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       {/* Toolbar */}
       <div style={{
         display: 'flex',
@@ -181,6 +183,50 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           {placeholder}
         </div>
       )}
+
+      {/* TipTap Editor Styles */}
+      <style jsx global>{`
+        .ProseMirror {
+          outline: none;
+        }
+        .ProseMirror p {
+          margin: 0.5em 0;
+        }
+        .ProseMirror p:first-child {
+          margin-top: 0;
+        }
+        .ProseMirror p:last-child {
+          margin-bottom: 0;
+        }
+        .ProseMirror h2 {
+          font-size: 1.5em;
+          font-weight: 600;
+          margin: 0.75em 0 0.5em;
+        }
+        .ProseMirror h3 {
+          font-size: 1.25em;
+          font-weight: 600;
+          margin: 0.75em 0 0.5em;
+        }
+        .ProseMirror ul,
+        .ProseMirror ol {
+          padding-left: 1.5em;
+          margin: 0.5em 0;
+        }
+        .ProseMirror li {
+          margin: 0.25em 0;
+        }
+        .ProseMirror a {
+          color: var(--color-accent);
+          text-decoration: underline;
+        }
+        .ProseMirror strong {
+          font-weight: 600;
+        }
+        .ProseMirror em {
+          font-style: italic;
+        }
+      `}</style>
     </div>
   )
 }
@@ -204,7 +250,7 @@ function ToolbarButton({ onClick, active, disabled, title, children }: ToolbarBu
         padding: '0.25rem 0.5rem',
         border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-sm)',
-        background: active ? 'var(--color-accent)' : 'white',
+        background: active ? 'var(--color-accent)' : 'var(--color-surface)',
         color: active ? 'white' : 'var(--color-text)',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.5 : 1,
@@ -219,7 +265,7 @@ function ToolbarButton({ onClick, active, disabled, title, children }: ToolbarBu
       }}
       onMouseOut={(e) => {
         if (!disabled && !active) {
-          e.currentTarget.style.background = 'white'
+          e.currentTarget.style.background = 'var(--color-surface)'
         }
       }}
     >
