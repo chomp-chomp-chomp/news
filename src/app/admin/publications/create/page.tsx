@@ -28,6 +28,7 @@ async function createPublicationAction(
       const fromEmail = formData.get('fromEmail') as string
       const replyToEmail = formData.get('replyToEmail') as string
       const emailTemplate = formData.get('emailTemplate') as string
+      const webTemplate = formData.get('webTemplate') as string
       const isPublic = formData.get('isPublic') === 'on'
 
       // Branding fields
@@ -80,6 +81,7 @@ async function createPublicationAction(
           from_email: fromEmail,
           reply_to_email: replyToEmail || null,
           email_template: emailTemplate || 'classic',
+          web_template: webTemplate || 'classic',
           is_public: isPublic,
           brand: Object.keys(brand).length > 0 ? brand : {},
         },

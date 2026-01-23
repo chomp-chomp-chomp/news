@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { FormState } from './types'
 import { Database } from '@/types/database'
 import { EMAIL_TEMPLATES, EmailTemplateId, getAllTemplates } from '@/lib/email-templates/registry'
+import { getAllWebTemplates } from '@/lib/web-templates/registry'
 
 type Publication = Database['public']['Tables']['publications']['Row']
 
@@ -183,6 +184,27 @@ export default function PublicationForm({
                 </select>
                 <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
                   Choose the email layout template for your newsletters
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="webTemplate" className="form-label">
+                  Web Template
+                </label>
+                <select
+                  id="webTemplate"
+                  name="webTemplate"
+                  className="form-input"
+                  defaultValue={initialData?.web_template || 'classic'}
+                >
+                  {getAllWebTemplates().map((template) => (
+                    <option key={template.id} value={template.id}>
+                      {template.name} - {template.description}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                  Choose the web layout template for viewing issues online
                 </p>
               </div>
             </div>
