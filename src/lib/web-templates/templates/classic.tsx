@@ -1,0 +1,189 @@
+import Link from 'next/link'
+import { RenderModel, RenderBlock } from '@/lib/render-model'
+import {
+  StoryBlockData,
+  PromoBlockData,
+  TextBlockData,
+  ImageBlockData,
+  FooterContent,
+} from '@/types/blocks'
+
+interface ClassicWebTemplateProps {
+  renderModel: RenderModel
+}
+
+/**
+ * Classic Web Template
+ * Current default layout with clean typography and standard spacing
+ */
+export default function ClassicWebTemplate({ renderModel }: ClassicWebTemplateProps) {
+  const { blocks } = renderModel
+
+  return (
+    <article style={{
+      maxWidth: '700px',
+      margin: '0 auto',
+      padding: '0 var(--spacing-md)',
+    }}>
+      {blocks.map((block) => (
+        <BlockRenderer key={block.id} block={block} />
+      ))}
+    </article>
+  )
+}
+
+function BlockRenderer({ block }: { block: RenderBlock }) {
+  switch (block.type) {
+    case 'story':
+      return <StoryBlock data={block.data as StoryBlockData} />
+    case 'promo':
+      return <PromoBlock data={block.data as PromoBlockData} />
+    case 'text':
+      return <TextBlock data={block.data as TextBlockData} />
+    case 'divider':
+      return <DividerBlock />
+    case 'image':
+      return <ImageBlock data={block.data as ImageBlockData} />
+    case 'footer':
+      return <FooterBlock data={block.data as FooterContent} />
+    default:
+      return null
+  }
+}
+
+function StoryBlock({ data }: { data: StoryBlockData }) {
+  return (
+    <section style={{ marginBottom: '2.5rem' }}>
+      {data.image_url && (
+        <Link href={data.link} style={{ display: 'block', marginBottom: '1.25rem' }}>
+          <img
+            src={data.image_url}
+            alt={data.image_alt || data.title}
+            style={{
+              width: '100%',
+              height: 'auto',
+              borderRadius: 'var(--radius-md)',
+              objectFit: 'cover',
+            }}
+          />
+        </Link>
+      )}
+      <h2 style={{ fontSize: '1.375rem', fontWeight: 500, lineHeight: 1.3, marginBottom: '0.75rem' }}>
+        <Link href={data.link} style={{ color: 'inherit', textDecoration: 'none' }}>
+          {data.title}
+        </Link>
+      </h2>
+      <p style={{ color: 'var(--color-text-muted)', fontSize: '1rem', lineHeight: '1.6', marginBottom: '0.75rem' }}>
+        {data.blurb}
+      </p>
+      <Link href={data.link} style={{ fontSize: '1rem', fontWeight: 500 }}>
+        Read more →
+      </Link>
+    </section>
+  )
+}
+
+function PromoBlock({ data }: { data: PromoBlockData }) {
+  return (
+    <section
+      style={{
+        backgroundColor: data.background_color || 'var(--color-sidebar-bg)',
+        padding: '1.875rem 1.25rem',
+        borderRadius: 'var(--radius-md)',
+        marginBottom: '1.875rem',
+        textAlign: 'center',
+      }}
+    >
+      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem' }}>{data.title}</h3>
+      <div
+        style={{ fontSize: '1rem', lineHeight: '1.6', marginBottom: data.link ? '1.25rem' : 0 }}
+        dangerouslySetInnerHTML={{ __html: data.content }}
+      />
+      {data.link && (
+        <Link href={data.link} className="btn btn-primary">
+          {data.link_text || 'Learn More'}
+        </Link>
+      )}
+    </section>
+  )
+}
+
+function TextBlock({ data }: { data: TextBlockData }) {
+  return (
+    <section style={{
+      marginBottom: '1.25rem',
+      textAlign: data.alignment || 'left',
+    }}>
+      <div
+        style={{ fontSize: '1rem', lineHeight: '1.7' }}
+        dangerouslySetInnerHTML={{ __html: data.content }}
+      />
+    </section>
+  )
+}
+
+function DividerBlock() {
+  return (
+    <hr style={{
+      border: 'none',
+      borderTop: '1px solid var(--color-border)',
+      margin: '3rem 0',
+    }} />
+  )
+}
+
+function ImageBlock({ data }: { data: ImageBlockData }) {
+  const imgElement = (
+    <img
+      src={data.url}
+      alt={data.alt}
+      style={{
+        width: '100%',
+        height: 'auto',
+        borderRadius: 'var(--radius-md)',
+      }}
+    />
+  )
+
+  return (
+    <section style={{ marginBottom: '2rem' }}>
+      {data.link ? <Link href={data.link}>{imgElement}</Link> : imgElement}
+      {data.caption && (
+        <p className="text-muted" style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>
+          {data.caption}
+        </p>
+      )}
+    </section>
+  )
+}
+
+function FooterBlock({ data }: { data: FooterContent }) {
+  return (
+    <footer style={{
+      marginTop: '4rem',
+      paddingTop: '2rem',
+      borderTop: '1px solid var(--color-border)',
+      textAlign: 'center',
+    }}>
+      <p className="text-muted" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
+        {data.text}
+      </p>
+
+      {data.social_links && data.social_links.length > 0 && (
+        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginBottom: '1rem' }}>
+          {data.social_links.map((social, idx) => (
+            <Link key={idx} href={social.url} style={{ fontSize: '0.9rem' }}>
+              {social.label || social.platform}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {data.address && (
+        <p className="text-light" style={{ fontSize: '0.85rem' }}>
+          {data.address}
+        </p>
+      )}
+    </footer>
+  )
+}
