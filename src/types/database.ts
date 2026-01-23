@@ -222,6 +222,52 @@ export interface Database {
           updated_at?: string
         }
       }
+      publication_lists: {
+        Row: {
+          id: string
+          publication_id: string
+          name: string
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          publication_id: string
+          name: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          publication_id?: string
+          name?: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      subscriber_lists: {
+        Row: {
+          id: string
+          subscriber_id: string
+          list_id: string
+          added_at: string
+        }
+        Insert: {
+          id?: string
+          subscriber_id: string
+          list_id: string
+          added_at?: string
+        }
+        Update: {
+          id?: string
+          subscriber_id?: string
+          list_id?: string
+          added_at?: string
+        }
+      }
       send_jobs: {
         Row: {
           id: string
