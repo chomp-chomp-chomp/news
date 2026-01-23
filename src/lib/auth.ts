@@ -1,6 +1,6 @@
 import { createAdminClient, createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Database } from '@/types/database'
+import { DatabaseWithRelationships } from '@/types/database'
 
 /**
  * Get current user or redirect to login
@@ -107,7 +107,7 @@ export async function getUserPublications(userId?: string) {
   }
 
   // Filter out deleted publications
-  type Pub = Database['public']['Tables']['publications']['Row']
+  type Pub = DatabaseWithRelationships['public']['Tables']['publications']['Row']
   return data?.map((d: { publication: Pub | null }) => d.publication)
     .filter((pub: Pub | null): pub is Pub => pub !== null && pub.deleted_at === null) || []
 }
