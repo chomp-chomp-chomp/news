@@ -63,8 +63,9 @@ export async function PATCH(request: NextRequest) {
     const supabase = await createAdminClient()
 
     // Update each setting
-    const updates = Object.entries(settings).map(([key, value]) =>
-      supabase
+    const updates = Object.entries(settings).map(([key, value]) => {
+      // @ts-expect-error - Supabase type inference incorrectly infers 'never' for site_settings upsert
+      return supabase
         .from('site_settings')
         .upsert(
           {
@@ -74,7 +75,7 @@ export async function PATCH(request: NextRequest) {
           },
           { onConflict: 'key' }
         )
-    )
+    })
 
     const results = await Promise.all(updates)
     
