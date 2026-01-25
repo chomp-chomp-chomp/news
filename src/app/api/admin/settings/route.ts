@@ -63,18 +63,18 @@ export async function PATCH(request: NextRequest) {
     const supabase = await createAdminClient()
 
     // Update each setting
-    const updates = Object.entries(settings).map(([key, value]) =>
-      supabase
+    type SiteSettingInsert = Database['public']['Tables']['site_settings']['Insert']
+
+    const updates = Object.entries(settings).map(([key, value]) => {
+      const record: SiteSettingInsert = {
+        key,
+        value: value as string,
+        updated_at: new Date().toISOString()
+      }
+      return supabase
         .from('site_settings')
-        .upsert(
-          {
-            key,
-            value: value as string,
-            updated_at: new Date().toISOString()
-          } as Database['public']['Tables']['site_settings']['Insert'],
-          { onConflict: 'key' }
-        )
-    )
+        .upsert(record, { onConflict: 'key' })
+    })
 
     const results = await Promise.all(updates)
     
