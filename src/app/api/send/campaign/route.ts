@@ -148,7 +148,7 @@ async function processSendJob(
       .update({
         status: 'processing',
         started_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', jobId)
 
     logger.info('Processing send job', { jobId, recipientCount: subscribers.length })
@@ -259,7 +259,7 @@ async function processSendJob(
         .update({
           sent_count: sentCount,
           failed_count: failedCount,
-        })
+        } as any)
         .eq('id', jobId)
 
       logger.info('Batch processed', {
@@ -285,7 +285,7 @@ async function processSendJob(
         completed_at: new Date().toISOString(),
         sent_count: sentCount,
         failed_count: failedCount,
-      })
+      } as any)
       .eq('id', jobId)
 
     // Update issue status and stats
@@ -295,7 +295,7 @@ async function processSendJob(
         status: 'sent',
         sent_at: new Date().toISOString(),
         send_count: sentCount,
-      })
+      } as any)
       .eq('id', issueId)
 
     logger.info('Send job completed', {
@@ -314,7 +314,7 @@ async function processSendJob(
         status: 'failed',
         error_message: error instanceof Error ? error.message : 'Unknown error',
         completed_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', jobId)
   }
 }
