@@ -76,16 +76,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Create send job
-    const { data: sendJob, error: jobError } = (await adminSupabase
+    // @ts-expect-error - Supabase type inference issue with insert
+    const { data: sendJob, error: jobError } = await adminSupabase
       .from('send_jobs')
       .insert({
         publication_id: issue.publication_id,
         issue_id: issueId,
         status: 'pending',
         total_recipients: subscribers.length,
-      } as any)
+      })
       .select()
-      .single()) as any
+      .single()
 
     if (jobError || !sendJob) {
       logger.error('Failed to create send job', jobError)
@@ -143,12 +144,13 @@ async function processSendJob(
 
   try {
     // Update job status
+    // @ts-expect-error - Supabase type inference issue with update
     await adminSupabase
       .from('send_jobs')
       .update({
         status: 'processing',
         started_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', jobId)
 
     logger.info('Processing send job', { jobId, recipientCount: subscribers.length })
@@ -214,6 +216,7 @@ async function processSendJob(
             }
 
             // Create send message record
+            // @ts-expect-error - Supabase type inference issue with insert
             await adminSupabase.from('send_messages').insert({
               send_job_id: jobId,
               subscriber_id: subscriber.id,
@@ -221,18 +224,19 @@ async function processSendJob(
               resend_message_id: data?.id,
               status: 'sent',
               sent_at: new Date().toISOString(),
-            } as any)
+            })
 
             return { success: true, subscriberId: subscriber.id }
           } catch (error: any) {
             // Log failed send
+            // @ts-expect-error - Supabase type inference issue with insert
             await adminSupabase.from('send_messages').insert({
               send_job_id: jobId,
               subscriber_id: subscriber.id,
               issue_id: issueId,
               status: 'failed',
               error_message: error.message || 'Unknown error',
-            } as any)
+            })
 
             logger.error('Failed to send to subscriber', error, {
               subscriberId: subscriber.id,
@@ -254,12 +258,13 @@ async function processSendJob(
       })
 
       // Update job progress
+      // @ts-expect-error - Supabase type inference issue with update
       await adminSupabase
         .from('send_jobs')
         .update({
           sent_count: sentCount,
           failed_count: failedCount,
-        } as any)
+        })
         .eq('id', jobId)
 
       logger.info('Batch processed', {
@@ -278,6 +283,7 @@ async function processSendJob(
     }
 
     // Mark job as completed
+    // @ts-expect-error - Supabase type inference issue with update
     await adminSupabase
       .from('send_jobs')
       .update({
@@ -285,17 +291,18 @@ async function processSendJob(
         completed_at: new Date().toISOString(),
         sent_count: sentCount,
         failed_count: failedCount,
-      } as any)
+      })
       .eq('id', jobId)
 
     // Update issue status and stats
+    // @ts-expect-error - Supabase type inference issue with update
     await adminSupabase
       .from('issues')
       .update({
         status: 'sent',
         sent_at: new Date().toISOString(),
         send_count: sentCount,
-      } as any)
+      })
       .eq('id', issueId)
 
     logger.info('Send job completed', {
@@ -308,13 +315,14 @@ async function processSendJob(
     logger.error('Send job processing failed', error, { jobId })
 
     // Mark job as failed
+    // @ts-expect-error - Supabase type inference issue with update
     await adminSupabase
       .from('send_jobs')
       .update({
         status: 'failed',
         error_message: error instanceof Error ? error.message : 'Unknown error',
         completed_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', jobId)
   }
 }

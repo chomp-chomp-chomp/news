@@ -63,17 +63,18 @@ export async function PATCH(request: NextRequest) {
     const supabase = await createAdminClient()
 
     // Update each setting using type assertion to bypass strict typing
+    // @ts-expect-error - Supabase type inference issue with upsert
     const updates = Object.entries(settings).map(([key, value]) =>
-      (supabase
+      supabase
         .from('site_settings')
         .upsert(
           {
             key,
             value,
             updated_at: new Date().toISOString()
-          } as any,
+          },
           { onConflict: 'key' }
-        ) as any)
+        )
     )
 
     const results = await Promise.all(updates)
