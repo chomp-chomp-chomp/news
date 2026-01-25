@@ -76,8 +76,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create send job
-    // @ts-expect-error - Supabase type inference issue with insert
-    const { data: sendJob, error: jobError } = await adminSupabase
+const { data: sendJob, error: jobError } = await adminSupabase
       .from('send_jobs')
       .insert({
         publication_id: issue.publication_id,
@@ -144,8 +143,7 @@ async function processSendJob(
 
   try {
     // Update job status
-    // @ts-expect-error - Supabase type inference issue with update
-    await adminSupabase
+await adminSupabase
       .from('send_jobs')
       .update({
         status: 'processing',
@@ -216,8 +214,7 @@ async function processSendJob(
             }
 
             // Create send message record
-            // @ts-expect-error - Supabase type inference issue with insert
-            await adminSupabase.from('send_messages').insert({
+                await adminSupabase.from('send_messages').insert({
               send_job_id: jobId,
               subscriber_id: subscriber.id,
               issue_id: issueId,
@@ -229,8 +226,7 @@ async function processSendJob(
             return { success: true, subscriberId: subscriber.id }
           } catch (error: any) {
             // Log failed send
-            // @ts-expect-error - Supabase type inference issue with insert
-            await adminSupabase.from('send_messages').insert({
+                await adminSupabase.from('send_messages').insert({
               send_job_id: jobId,
               subscriber_id: subscriber.id,
               issue_id: issueId,
@@ -258,8 +254,7 @@ async function processSendJob(
       })
 
       // Update job progress
-      // @ts-expect-error - Supabase type inference issue with update
-      await adminSupabase
+    await adminSupabase
         .from('send_jobs')
         .update({
           sent_count: sentCount,
@@ -283,8 +278,7 @@ async function processSendJob(
     }
 
     // Mark job as completed
-    // @ts-expect-error - Supabase type inference issue with update
-    await adminSupabase
+await adminSupabase
       .from('send_jobs')
       .update({
         status: 'completed',
@@ -295,8 +289,7 @@ async function processSendJob(
       .eq('id', jobId)
 
     // Update issue status and stats
-    // @ts-expect-error - Supabase type inference issue with update
-    await adminSupabase
+await adminSupabase
       .from('issues')
       .update({
         status: 'sent',
@@ -315,8 +308,7 @@ async function processSendJob(
     logger.error('Send job processing failed', error, { jobId })
 
     // Mark job as failed
-    // @ts-expect-error - Supabase type inference issue with update
-    await adminSupabase
+await adminSupabase
       .from('send_jobs')
       .update({
         status: 'failed',

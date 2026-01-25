@@ -67,5 +67,5 @@ export async function createAdminClient() {
       persistSession: false,
       detectSessionInUrl: false,
     },
-  })
+  }) as any // Type workaround for Supabase type inference issues
 }
