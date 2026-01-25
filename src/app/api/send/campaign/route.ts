@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create send job
-    const { data: sendJob, error: jobError } = await adminSupabase
+    const { data: sendJob, error: jobError } = (await adminSupabase
       .from('send_jobs')
       .insert({
         publication_id: issue.publication_id,
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
         total_recipients: subscribers.length,
       } as any)
       .select()
-      .single()
+      .single()) as any
 
     if (jobError || !sendJob) {
       logger.error('Failed to create send job', jobError)
