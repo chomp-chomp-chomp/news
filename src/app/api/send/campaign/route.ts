@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
         issue_id: issueId,
         status: 'pending',
         total_recipients: subscribers.length,
-      })
+      } as any)
       .select()
       .single()
 
@@ -221,7 +221,7 @@ async function processSendJob(
               resend_message_id: data?.id,
               status: 'sent',
               sent_at: new Date().toISOString(),
-            })
+            } as any)
 
             return { success: true, subscriberId: subscriber.id }
           } catch (error: any) {
@@ -232,7 +232,7 @@ async function processSendJob(
               issue_id: issueId,
               status: 'failed',
               error_message: error.message || 'Unknown error',
-            })
+            } as any)
 
             logger.error('Failed to send to subscriber', error, {
               subscriberId: subscriber.id,
